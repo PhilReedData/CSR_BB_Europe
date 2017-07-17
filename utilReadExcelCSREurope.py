@@ -14,12 +14,16 @@ class Company(object):
         self.isin = isin
         self.sic = sic
         self.sicName = sicName
+        self.year = -1
     
     def setIndexCountry(self, indexCountry):
         self.indexCountry = indexCountry
     
     def getTickerShort(self):
         return self.tickerFull[:self.tickerFull.index(' ')]
+    
+    def setYear(self, year):
+        self.year = year
     
     def __str__(self):
         return("Company object:\n"
@@ -30,9 +34,10 @@ class Company(object):
                "  constitCountry = {4}\n"
                "  isin = {5} \n"
                "  sic = {6} \n"
-               "  sicName = {7}"
+               "  sicName = {7} \n"
+               "  year = {8}"
                .format(self.indexCountry, self.tickerFull, self.name, self.disclosure,
-                       self.constitCountry, self.isin, self.sic, self.sicName))
+                       self.constitCountry, self.isin, self.sic, self.sicName, self.year))
 
 
 class Companies(object):
@@ -47,7 +52,7 @@ class Companies(object):
 companiesByCountry = {}
 allCompanies = []
 
-wb = open_workbook("U:/Ser-Huang_Poon/CSR_Europe/20170714B_CSR_Europe.xlsx")
+wb = open_workbook("U:/Ser-Huang_Poon/20170717c_EuropeCSR.xlsx")
 for sheet in wb.sheets()[1:16]:
     number_of_rows = sheet.nrows
     number_of_columns = sheet.ncols
