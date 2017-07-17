@@ -18,8 +18,9 @@ for zip in zipfiles:
     extractFolder = utilCSR.getIsoFromString(zip)
     extractPath = os.path.abspath(os.path.join(unzipPath, extractFolder))
     try:
-        zipfile.ZipFile(zipPath + zip).extractall(extractPath)
-    except zipfile.BadZipfile:
+        if not zip.startswith('IBEX2013'): # Error in this file for now
+            zipfile.ZipFile(zipPath + zip).extractall(extractPath)
+    except zipfile.BadZipfile as e:
         import sys
         print ('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
         print('File:' + zip)
