@@ -42,7 +42,7 @@ def createYearMatrix():
         matrix[year] = 0
     return matrix
     
-# Search given text for most occuring year, or -1 if none.
+# Search given text for most occuring year, or -2 if none.
 def findModeYearInText(text):
     # Blank new matrix
     yearMatrix = createYearMatrix()
@@ -59,6 +59,8 @@ def findModeYearInText(text):
     # Sorted list of tuples instead of dict (year, freq)
     # What about multi-mode? Need most recent? TO DO
     highestFreq = sortedYearMatrix[0][1]
+    if highestFreq == 0:
+        return -2 # no year found
     yearsWithHighestFreq = []
     latestYearWithHighestFreq = sortedYearMatrix[0][0]
     # Loop through years, increasing the year 

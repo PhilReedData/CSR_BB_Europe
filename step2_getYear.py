@@ -32,11 +32,12 @@ for unzipDir in unzipDirs:
         for file in files:
             if file.endswith('.pdf'):
                 path = join(unzipPath, unzipDir, file)
-                year = -1
+                year = -2
                 try:
                     year = findModeYearInPDF(path)
                     print (file, year)
                 except Exception as e:
+                    year = -1
                     print (file, 'could not open')
                 fout.write(unzipDir + ',' + file + ',' + str(year) + '\n')
                 

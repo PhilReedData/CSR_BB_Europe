@@ -7,7 +7,7 @@ INDEX2ISO = {
     'ATX'       :'AT', 
     'BEL'       :'BE', 
     'OMXC'      :'DK', 
-    'OMXH25'    :'FI', 
+    'OMXH'      :'FI', 
     'CAC'       :'FR', 
     'DAX'       :'DE', 
     'ISEQ'      :'IE', 
@@ -16,7 +16,7 @@ INDEX2ISO = {
     'OBX'       :'NO', 
     'PSI'       :'PT', 
     'IBEX'      :'ES', 
-    'OMX'       :'SE', 
+    'OMX2'      :'SE', 
     'SMI'       :'CH', 
     'UKX'       :'GB' 
 }
