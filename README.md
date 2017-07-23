@@ -17,6 +17,7 @@ Also 0. testing
 
 ### 2. Find year and rearrange 
 - Per country, read first page of PDF to determine year. (Takes a few hours.)
+- Reads the Bloomberg Excel identifiers workbook to get ISIN, SIC (matching on Ticker).
 - Copy that file to year folder within country.
 - What about .htm files? Or .txt files? Most (98%) are .pdf format, so ignore.
 - Output format:
@@ -25,7 +26,11 @@ Also 0. testing
 
 ### 3. Rearrange
 - Copy the files. 
-- Currently this is done in Step 2, but may want to move it here.	
+- Currently this is done in Step 2, but may want to move it here.
+- May also move the Bloomberg indentifiers reading here too.
+- 3 reads a CSV file of country,sourcefile,year,sic,isin,copy
+- 3B reads a CSV file of country, file, year
+- 3B needs to read the Bloomberg Excel identifiers workbook.
 	
 ## Utililities
 ### utilCSR
