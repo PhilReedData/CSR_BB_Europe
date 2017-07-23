@@ -5,6 +5,7 @@ Analyse the CSR reports from Bloomberg on European companies.
 Various stages below.
 1. Unzip to country folders
 2. Find year and rearrange 
+3. Rearrange (currently part of step 2)
 
 Also 0. testing
 
@@ -22,6 +23,10 @@ Also 0. testing
 	- folder per country (2-digit ISO), folder per year (or -2 unfound, -1 encrypted)
 	- filename: SIC\_ISIN\_TYPEn.pdf where TYPE is CR and _n_ is number for multiple reports
 
+### 3. Rearrange
+- Copy the files. 
+- Currently this is done in Step 2, but may want to move it here.	
+	
 ## Utililities
 ### utilCSR
 Convertions etc., including dictionary of index code to country code.

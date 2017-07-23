@@ -29,8 +29,10 @@ if not exists(outPath):
 fout = open('years.csv','w')
 fout.write('country,sourcefile,year,sic,isin,copy\n')
 
+countriesToSkip = ['BE', 'DK', 'FI', 'IT', 'NL', 'NO']
+
 for unzipDir in unzipDirs:
-    if not unzipDir.startswith('ZZ_'):
+    if ((not unzipDir.startswith('ZZ_')) and (unzipDir not in countriesToSkip)):
         print(unzipDir)
         files = [f for f in listdir(join(unzipPath, unzipDir)) if (isfile(join(unzipPath, unzipDir ,f)) )]
         print (len(files), 'files')
@@ -66,8 +68,14 @@ for unzipDir in unzipDirs:
                     mkdir(join(outPath, country))
                 if not exists(join(outPath, country+'/'+str(year))):
                     mkdir(join(outPath, country+'/'+str(year)))
-                copy2(path , outfilepath)
-                
+                try:
+                    # Will move this critical bit (and related bits) to Step 3
+                    copy2(path , outfilepath)
+                except IOError as e:
+                    import sys
+                    print ('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+                    print ('Could not write to ' + outfilepath)
+                    copycount = str(copycount) + "_IOError"
                 # Update log
                 fout.write(country + ',' + file + ',' + str(year) + ',' + str(sic) + ',' + isin + ',' + str(copycount) + '\n')
                 

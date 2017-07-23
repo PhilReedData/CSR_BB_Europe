@@ -28,7 +28,13 @@ class Company(object):
         self.disclosure = disclosure
         self.constitCountry = constitCountry
         self.isin = isin
-        self.sic = sic
+        try:
+            # Is the sic a valid integer? If so, keep it (as String)
+            int(sic)
+            self.sic = sic
+        except Exception:
+            # For anything else:
+            self.sic = '0'
         self.sicName = sicName
         self.year = -1
     
