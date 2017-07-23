@@ -4,6 +4,22 @@
 
 from xlrd import open_workbook
 
+# I wrote this to store the imported data in Python Classes Companies and Company. 
+# It now appears that it might be more efficient as a Panda DataFrame.
+
+# Bloomberg filename includes Ticker between 1st and 2nd _
+def getTickerFromBBFilename(filename):
+    if '_' not in filename:
+        return ('_TICKER NOR UNDERSCORE FOUND_' + filename)
+    start = filename.index('_')
+    end = start + filename[start+1:].index('_')
+    ticker = '_TICKER_NOT_FOUND_'
+    if start > 0 and end > start:
+        ticker = filename[start+1:end+1]
+    else:
+        print('Ticker not found: ' + filename)# + ', start = ' + str(start) + ', end = ' + str(end))
+    return ticker
+
 class Company(object):
     def __init__(self, tickerFull, name, disclosure, constitCountry, isin, sic, sicName):
         self.indexCountry = ''
@@ -18,6 +34,9 @@ class Company(object):
     
     def setIndexCountry(self, indexCountry):
         self.indexCountry = indexCountry
+        
+    def getIndexCountry(self):
+        return self.indexCountry
     
     def getTickerShort(self):
         return self.tickerFull[:self.tickerFull.index(' ')]
@@ -43,7 +62,33 @@ class Company(object):
 class Companies(object):
     def __init__(self, companies):
         self.companies = companies
+        # dict of indexCountry -> (sub)list of companies
+        self.companiesByIndexCountry = {}
         
+    def getAllCompanies(self):
+        return self.companies
+    
+    def getCompaniesByIndexCountry(self, indexCountry):
+        if indexCountry not in self.companiesByIndexCountry.keys():
+            # If not requested before, create this sublist
+            someCompanies = []
+            for company in self.companies:
+                if company.getIndexCountry() == indexCountry:
+                    someCompanies.append(company)
+            self.companiesByIndexCountry[indexCountry] = someCompanies
+        # Return the (sub) list, regardless of generated this time or prior
+        return self.companiesByIndexCountry[indexCountry]
+    
+    # Look through companies list for this index country. Return first match, else None.
+    def getCompanyByTicker(self, indexCountry, ticker):
+        for company in self.getCompaniesByIndexCountry(indexCountry):
+            if company.getTickerShort() == ticker:
+                return company
+        return None
+        
+    def getCompanyByBBFilename(self, indexCountry, filename):
+        return self.getCompanyByTicker(indexCountry, getTickerFromBBFilename(filename))
+    
     def __str__(self):
         return("Companies object:\n"
                "  number of companies = {0}"
@@ -95,3 +140,13 @@ print(companies)
 
 #for company in allCompanies[:2]:
 #    print(company.getTickerShort())
+
+fi = 'FI'
+print(len(companies.getCompaniesByIndexCountry(fi)), fi)
+
+countrytest = 'CH'
+filenametest = "122908_ADEN_Corporate_Responsibility_WD000000000096636192.pdf"
+tickertest = getTickerFromBBFilename(filenametest)
+print(tickertest, 'ADEN')
+companytest = companies.getCompanyByBBFilename(countrytest, filenametest)
+print (companytest)
