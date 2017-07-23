@@ -64,6 +64,7 @@ class Companies(object):
         self.companies = companies
         # dict of indexCountry -> (sub)list of companies
         self.companiesByIndexCountry = {}
+        self.noneCompany = Company('UNKNOWN', 'UNKNOWN', '0', 'ZZ', 'UNKNOWN', '0', 'UNKNOWWN')
         
     def getAllCompanies(self):
         return self.companies
@@ -84,7 +85,7 @@ class Companies(object):
         for company in self.getCompaniesByIndexCountry(indexCountry):
             if company.getTickerShort() == ticker:
                 return company
-        return None
+        return self.noneCompany
         
     def getCompanyByBBFilename(self, indexCountry, filename):
         return self.getCompanyByTicker(indexCountry, getTickerFromBBFilename(filename))
@@ -96,6 +97,7 @@ class Companies(object):
         
 companiesByCountry = {}
 allCompanies = []
+
 
 wb = open_workbook("U:/Ser-Huang_Poon/20170717c_EuropeCSR.xlsx")
 for sheet in wb.sheets()[1:16]:
@@ -148,5 +150,10 @@ countrytest = 'CH'
 filenametest = "122908_ADEN_Corporate_Responsibility_WD000000000096636192.pdf"
 tickertest = getTickerFromBBFilename(filenametest)
 print(tickertest, 'ADEN')
+companytest = companies.getCompanyByBBFilename(countrytest, filenametest)
+print (companytest)
+
+countrytest = 'NO'
+filenametest = "122908_XXXXX_Corporate_Responsibility_WD000000000096636192.pdf"
 companytest = companies.getCompanyByBBFilename(countrytest, filenametest)
 print (companytest)
