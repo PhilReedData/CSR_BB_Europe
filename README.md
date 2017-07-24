@@ -48,3 +48,17 @@ Reads in from the Excel tables of company indentifiers by country index.
 
 - Instantiates the Companies class with Company list. 
 - This might be better as a DataFrame.
+
+Format of Excel document:
+
+- First sheet: "Summary". Not read by script, but the dictionary of country to index was used in utilCSR.py.
+- Next 15 sheets: "1.AT" to "15.GB". Columns A:G contain:
+  - BB Code, e.g. ANDR AV Equity
+  - Name, e.g. ANDRITZ AG
+  - Disclosure, to 4 decimal places
+  - Country code for company, e.g. AT
+  - ISIN, e.g. AT0000730007
+  - SIC code, two digits.
+  - SIC name, e.g. Industrials.
+  
+There were some companies in multiple indices, some companies not included, and one SIC code/name missing.

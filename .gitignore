@@ -4,5 +4,7 @@ stats.csv
 statsB.csv
 years.xlsx
 ~$years.xlsx
+stats.xlsx
 statsB.xlsx
+~$stats.xlsx
 *.pyc
