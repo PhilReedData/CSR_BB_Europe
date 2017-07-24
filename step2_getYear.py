@@ -1,5 +1,7 @@
 #!/usr/bin/python    
 
+corruptFiles = ["072409_BNP_Corporate_Responsibility_WC000000001985010381.pdf"]
+
 import utilGetYearFromPDF
 from utilGetYearFromPDF import findModeYearInPDF
 
@@ -23,7 +25,7 @@ for unzipDir in unzipDirs:
         files = [f for f in listdir(join(unzipPath, unzipDir)) if (isfile(join(unzipPath, unzipDir ,f)) )]
         #print (len(files), 'files')
         for file in files:
-            if file.endswith('.pdf'):
+            if file.endswith('.pdf') and (not file in corruptFiles):
                 # Get year from first page of PDF
                 path = join(unzipPath, unzipDir, file)
                 year = -2

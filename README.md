@@ -2,27 +2,28 @@
 Rearrange the CSR reports from Bloomberg on European companies.
 
 ## Contents
-Various stages below.
+Run the stages in the order below.
 1. Unzip to country folders
 2. Find year and rearrange 
 3. Rearrange files
+4. Detect language
 
 Also 0. testing
 
 ## Summary
-### 1. Unzip to country folders
+### Step 1. Unzip to country folders
 - Unzip all reports so far. One folder per country (index). 
 - All years and report types mixed up. 
 - Can't use given year in filenames (this is upload date, not report date).
 - Output format:
 	- folder per country (2-digit ISO)
-	- filename: unchanged. UPLOADDATE\_TICKER\_OTHER.pdf where UPLOADDATE is YYMMDD
+	- filename: unchanged. UPLOADDATE\_TICKER\_OTHER.pdf where UPLOADDATE is MMDDYY
 
-### 2. Find year
+### Step 2. Find year
 - Per country, read first page of PDF to determine year. (Takes a few hours.)
 - What about .htm files? Or .txt files? Most (98%) are .pdf format, so ignore.
 
-### 3. Rearrange
+### Step 3. Rearrange
 - Create new filenames and copy the files. 
 - Reads the Bloomberg Excel identifiers workbook to get ISIN, SIC (matching on Ticker).
 - Reads a CSV file of country, file, year
@@ -30,6 +31,13 @@ Also 0. testing
 	- folder per country (2-digit ISO), folder per year (or -2 unfound, -1 encrypted)
 	- filename: SIC\_ISIN\_TYPEn.pdf where TYPE is CR and _n_ is number for multiple reports
 	
+### Step 4. Detect language
+- Read first 5 pages of PDFs to detect most likely/common language.
+- Add an extra column to the stats.csv as stats_lang.csv
+- Use Google Translate implementation.
+- Return two letter language code, or '-1' if failed.
+
+
 ## Utililities
 ### utilCSR
 Convertions etc., including dictionary of index code to country code.

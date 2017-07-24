@@ -11,13 +11,21 @@ from os.path import isfile, join, exists
 from shutil import copyfile, copy2
 
 doCopy = True
+countriesToSkip = []
+countriesToSkip = ['AT', 'CH', 'DE', 'ES', 'FR', 'IE', 'PT', 'SE', 'GB'] # TEMP
 
 unzipPath = "U:/Phil_Read/CSR_Europe/unzipped_raw/"
-outPath = "U:/Phil_Read/CSR_Europe/unzipped_country_year/"
-planPath = 'years.csv'
+outPath = "U:/Phil_Read/CSR_Europe/unzipped_country_yearB/"
+planPath = 'yearsFilled.csv'
+planPath = 'stats_yearsFilled.csv' # TEMP 
+logPath = 'statsB.csv'
 
-log = open('stats.csv','w')
-log.write('country,sourcefile,year,sic,isin,CRpart,destfile\n')
+if isfile(logPath):
+    # Continue from before
+    log = open(logPath,'a')
+else:
+    log = open(logPath,'w')
+    log.write('country,sourcefile,year,yearsource,sic,isin,CRpart,destfile\n')
 
 df = pd.read_csv(planPath)
 # Headings ('country,file,year')
@@ -27,8 +35,9 @@ if not exists(outPath):
 
 for index, row in df.iterrows():
     country = row["country"]
-    sourcefile = row["file"]
+    sourcefile = row["sourcefile"]
     year = row["year"]
+    yearsource = row["yearsource"]
     print(country, sourcefile, year)
     company = companies.getCompanyByBBFilename(country, sourcefile)
     sic = company.sic
@@ -53,7 +62,7 @@ for index, row in df.iterrows():
     
     fromPath = join(unzipPath, country, sourcefile)
     try:
-        if doCopy:
+        if doCopy and (not country in countriesToSkip):
             copy2(fromPath, outfilepath)
             print ('Written to: ' + country + '/' + str(year) + '/' + outfilename)
     except IOError as e:
@@ -61,7 +70,7 @@ for index, row in df.iterrows():
         print ('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
         print ('Could not write to ' + country + '/' + str(year) + '/' + outfilename)
     # Update log
-    log.write(country + ',' + sourcefile + ',' + str(year) + ',' + str(sic) + ',' + isin + ',' + str(copycount) + ',' + outfilename + '\n')
+    log.write(country + ',' + sourcefile + ',' + str(year) + ',' + str(yearsource) + ',' + str(sic) + ',' + isin + ',' + str(copycount) + ',' + outfilename + '\n')
 
 
 log.close()
