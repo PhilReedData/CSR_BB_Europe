@@ -5,7 +5,7 @@ Analyse the CSR reports from Bloomberg on European companies.
 Various stages below.
 1. Unzip to country folders
 2. Find year and rearrange 
-3. Rearrange (currently part of step 2)
+3. Rearrange files
 
 Also 0. testing
 
