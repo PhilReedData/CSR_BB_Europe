@@ -23,6 +23,10 @@ Also 0. testing
 - Per country, read first page of PDF to determine year. (Takes a few hours.)
 - What about .htm files? Or .txt files? Most (98%) are .pdf format, so ignore.
 
+### Step 2a. Fill year gaps
+- If year could not be mined, get year from date of upload in filename.
+- Extra variable yearsource has value 0 (year mined), -1 (PDF unreadable), -2 (PDF no year found)
+
 ### Step 3. Rearrange
 - Create new filenames and copy the files. 
 - Reads the Bloomberg Excel identifiers workbook to get ISIN, SIC (matching on Ticker).

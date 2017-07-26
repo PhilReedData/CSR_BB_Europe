@@ -2,8 +2,8 @@
 
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
-import pyPdf
-from pyPdf.utils import PdfReadError
+import PyPDF2 # replace pyPdf with PyPDF2 ?
+#from pyPdf.utils import PdfReadError # No longer used, remove
 
 import pandas as pd
 import numpy as np
@@ -11,16 +11,16 @@ import numpy as np
 from os.path import join
 
 unzipPath = "U:/Phil_Read/CSR_Europe/unzipped_raw/"
-statsPathIn = 'stats.csv'
-statsPathOut = 'stats_lang.csv'
+statsPathIn = 'statsB.csv'
+statsPathOut = 'statsB_langB.csv'
 
 # Get the text of first 5 pages of given PDF file.
 def getTextContentOfPdfPages(path, num_pages=5):
     content = ""
     p = file(path, "rb")
     try:
-        pdf = pyPdf.PdfFileReader(p)
-    except PdfReadError:
+        pdf = PyPDF2.PdfFileReader(p) # Replace pyPdf with PyPDF2 ?
+    except:
         print ('Error reading file: ' + path)
         return content # can't open file.
     for i in range(0, num_pages):
@@ -34,8 +34,15 @@ def getTextContentOfPdfPages(path, num_pages=5):
     
 # Detect the language of the report
 def getLang(country,filename):
+    if country == 'GB':
+        return '-2' # skip GB
+    filenamesToSkip = [
+        "072409_BNP_Corporate_Responsibility_WC000000001985010381.pdf",
+        "052715_INF_Corporate_Responsibility_SD000000002233279310.pdf",
+        "050808_BARC_Corporate_Responsibility_SD000000000083695052.pdf"
+        ]
     if filename == "072409_BNP_Corporate_Responsibility_WC000000001985010381.pdf":
-        return '-1' # corrupt file
+        return '-2' # corrupt file
 
     fullPath = join(unzipPath, country + '/' + filename)
     print ('Reading: ' + fullPath)
