@@ -13,6 +13,9 @@ from os.path import join
 unzipPath = "U:/Phil_Read/CSR_Europe/unzipped_raw/"
 statsPathIn = 'statsB.csv'
 statsPathOut = 'statsB_langB.csv'
+logPath = 'log_lang.csv'
+with open(logPath, 'w') as logFile:
+    logFile.write('country, sourcefile, lang\n')
 
 # Get the text of first 5 pages of given PDF file.
 def getTextContentOfPdfPages(path, num_pages=5):
@@ -39,9 +42,10 @@ def getLang(country,filename):
     filenamesToSkip = [
         "072409_BNP_Corporate_Responsibility_WC000000001985010381.pdf",
         "052715_INF_Corporate_Responsibility_SD000000002233279310.pdf",
-        "050808_BARC_Corporate_Responsibility_SD000000000083695052.pdf"
+        "050808_BARC_Corporate_Responsibility_SD000000000083695052.pdf",
+        "072808_NRE1V_Corporate_Responsibility_WC000000000087573266.pdf"
         ]
-    if filename == "072409_BNP_Corporate_Responsibility_WC000000001985010381.pdf":
+    if filename in filenamesToSkip:
         return '-2' # corrupt file
 
     fullPath = join(unzipPath, country + '/' + filename)
@@ -52,6 +56,8 @@ def getLang(country,filename):
     except LangDetectException:
         lang = '-1'
     print ('Detected: ' + lang)
+    with open(logPath, 'a') as logFile:
+        logFile.write(country+', '+filename+','+lang+'\n')
     return lang
 
 # Open stats file which contains all filenames.
