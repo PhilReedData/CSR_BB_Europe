@@ -20,6 +20,7 @@ fout.write('country,sourcefile,year\n')
 countriesToSkip = ['ZZ_OTHER']
 
 for unzipDir in unzipDirs:
+    country = unzipDir
     if unzipDir not in countriesToSkip:
         print(unzipDir)
         files = [f for f in listdir(join(unzipPath, unzipDir)) if (isfile(join(unzipPath, unzipDir ,f)) )]

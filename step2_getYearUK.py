@@ -5,8 +5,8 @@ corruptFiles = []
 import utilGetYearFromPDF
 from utilGetYearFromPDF import findModeYearInPDF
 
-unzipPathAR = "U:/Ser-Huang_Poon/UK_AnnualReportUnzip/"
-unzipPathCR = "U:/Ser-Huang_Poon/UK_CSRunzip/"
+unzipPathAR = "U:/Ser-Huang_Poon/UK_ARunzip/"
+unzipPathCR = "U:/Ser-Huang_Poon/UK_CRunzip/"
 unzipPathESG = "U:/Ser-Huang_Poon/UK_ESGunzip/"
 
 from os import listdir, mkdir

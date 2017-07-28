@@ -13,8 +13,8 @@ from shutil import copyfile, copy2
 doCopy = True
 countriesToSkip = []
 
-unzipPathAR = "U:/Ser-Huang_Poon/UK_AnnualReportUnzip/"
-unzipPathCR = "U:/Ser-Huang_Poon/UK_CSRunzip/"
+unzipPathAR = "U:/Ser-Huang_Poon/UK_ARunzip/"
+unzipPathCR = "U:/Ser-Huang_Poon/UK_CRunzip/"
 unzipPathESG = "U:/Ser-Huang_Poon/UK_ESGunzip/"
 outPath = "U:/Phil_Read/CSR_UK/unzipped_reporttype_year/"
 planPath = 'yearsFilledUK.csv'
@@ -71,7 +71,7 @@ for index, row in df.iterrows():
         continue
     unzipPath = unzipPathDict[reporttype]
     
-    fromPath = join(unzipPath, reporttype, sourcefile)
+    fromPath = join(unzipPath, sourcefile)
     try:
         if doCopy and (not reporttype in countriesToSkip):
             copy2(fromPath, outfilepath)
@@ -79,7 +79,10 @@ for index, row in df.iterrows():
     except IOError as e:
         import sys
         print ('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+        #print ('fromPath ' + fromPath)
+        #print ('outfilepath ' + outfilepath)
         print ('Could not write to ' + reporttype + '/' + str(year) + '/' + outfilename)
+        #raise e
     # Update log
     lineout = reporttype + ',' + sourcefile + ',' + str(year) + ',' + str(yearsource) 
     lineout += ',' + str(sic) + ',' + isin + ',' + str(copycount) + ',' + outfilename 
