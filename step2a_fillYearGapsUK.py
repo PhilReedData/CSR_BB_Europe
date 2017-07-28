@@ -5,15 +5,15 @@ YEARSOURCES = {0:'MINED', -1:'FILENAME_PDF-UNOPENED', -2:'FILENAME_PDF-NOYEARFOU
 import pandas as pd
 import numpy as np
 
-pathIn = 'years.csv'
-pathOut = 'yearsFilled.csv'
+pathIn = 'yearsUK.csv'
+pathOut = 'yearsFilledUK.csv'
 
 fout = open(pathOut,'w')
-fout.write('country,sourcefile,year,yearsource\n')
+fout.write('reporttype,sourcefile,year,yearsource\n')
 
 df = pd.read_csv(pathIn)
 for index, row in df.iterrows():
-    country = row["country"]
+    reporttype = row["reporttype"]
     sourcefile = row["sourcefile"]
     year = row["year"]
          
@@ -31,6 +31,6 @@ for index, row in df.iterrows():
             pass
             
     # Update log
-    fout.write(country + ',' + sourcefile + ',' + str(year) + ',' + str(yearsource) + '\n')
+    fout.write(reporttype + ',' + sourcefile + ',' + str(year) + ',' + str(yearsource) + '\n')
 
 fout.close()
