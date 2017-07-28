@@ -3,7 +3,7 @@
 # Get most likely year from first page of PDF
 
 import operator
-import pyPdf
+import PyPDF2
 
 
     
@@ -14,7 +14,7 @@ import pyPdf
 # Starting from 2000 up to 2019.
 # Record year of range as the last year, eg 2006-07 is 2007
 #   (So keep first two and last two digits).
-# Problem that sometimes a different hyphen is used.
+# Problem that sometimes a different hyphen is used, or a slash.
 start = 2000
 end = 2019
 ALL_TYPE_A = []
@@ -31,7 +31,7 @@ def getYearStringValue(ys):
     try:
         year = int(ys[0:2] + ys[-2:])
     except ValueError:
-        year = -1
+        year = -3
     return year
     
 # new blank matrix
@@ -74,18 +74,23 @@ def findModeYearInText(text):
     return latestYearWithHighestFreq
     
 
-def getTextContentOfPdfPage1(path):
+def getTextContentOfPdfPages(path,startPage=0,endPage=1):
     content = ""
-    num_pages = 1
     p = file(path, "rb")
-    pdf = pyPdf.PdfFileReader(p)
-    for i in range(0, num_pages):
+    pdf = PyPDF2.PdfFileReader(p)
+    for i in range(startPage, endPage):
         content += pdf.getPage(i).extractText() + "\n"
     #content = " ".join(content.replace(u"\xa0", " ").strip().split())
     return content
 
+# Look for year in first page, if none found then second page, then third.
 def findModeYearInPDF(path):
-    return findModeYearInText(getTextContentOfPdfPage1(path))
+    year = findModeYearInText(getTextContentOfPdfPages(path, 0, 1))
+    if year == -2: # no year found
+        year = findModeYearInText(getTextContentOfPdfPages(path, 1, 2))
+        if year == -2: # no year found
+            year = findModeYearInText(getTextContentOfPdfPages(path, 2, 3))
+    return year
 
     
 
@@ -93,6 +98,6 @@ if __name__ == "__main__":
     y = findModeYearInText("2001 2006 2009 200120092008")
     print('mode',y)
     
-    #y = findModeYearInPDF("U:/Phil_Read/CSR_Europe/unzipped_raw/CH/122908_ADEN_Corporate_Responsibility_WD000000000096636192.pdf")
-    #print('mode',y)
+    y = findModeYearInPDF("U:/Phil_Read/CSR_Europe/unzipped_raw/CH/122908_ADEN_Corporate_Responsibility_WD000000000096636192.pdf")
+    print('mode',y)
     

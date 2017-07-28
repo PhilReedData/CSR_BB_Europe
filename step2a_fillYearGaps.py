@@ -24,7 +24,7 @@ for index, row in df.iterrows():
          
     # Where did we get the year? And subsitute if needed
     yearsource = 0
-    if year < 0:
+    if year == -2: # if year not found in 3 pages of PDF
         yearsource = year
         # The filename is MMDDYY...
         yyFromFilename = sourcefile[4:6]
