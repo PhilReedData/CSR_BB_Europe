@@ -12,12 +12,12 @@ from shutil import copyfile, copy2
 
 doCopy = True
 countriesToSkip = []
-countriesToSkip = ['AT', 'CH', 'DE', 'ES', 'FR', 'IE', 'PT', 'SE', 'GB'] # TEMP
+#countriesToSkip = ['AT', 'CH', 'DE', 'ES', 'FR', 'IE', 'PT', 'SE', 'GB'] # TEMP
 
 unzipPath = "U:/Phil_Read/CSR_Europe/unzipped_raw/"
 outPath = "U:/Phil_Read/CSR_Europe/unzipped_country_yearB/"
 planPath = 'yearsFilled.csv'
-planPath = 'stats_yearsFilled.csv' # TEMP 
+#planPath = 'stats_yearsFilled.csv' # TEMP 
 logPath = 'statsB.csv'
 
 if isfile(logPath):

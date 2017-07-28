@@ -1,33 +1,39 @@
 #!/usr/bin/python    
 
-corruptFiles = ["072409_BNP_Corporate_Responsibility_WC000000001985010381.pdf"]
+corruptFiles = []
 
 import utilGetYearFromPDF
 from utilGetYearFromPDF import findModeYearInPDF
 
-unzipPath = "U:/Phil_Read/CSR_Europe/unzipped_raw/"
+unzipPathAR = "U:/Ser-Huang_Poon/UK_AnnualReportUnzip/"
+unzipPathCR = "U:/Ser-Huang_Poon/UK_CSRunzip/"
+unzipPathESG = "U:/Ser-Huang_Poon/UK_ESGunzip/"
 
 from os import listdir, mkdir
 from os.path import isfile, join, exists
 from shutil import copyfile, copy2
-unzipDirs = [f for f in listdir(unzipPath) if not (isfile(join(unzipPath, f)) )]
 
-#print(len(unzipDirs), 'unzipped')
+# List of Tuples of (reportType, unzipPath)
+unzipPaths = [('AR',unzipPathAR), ('CR',unzipPathCR), ('ESG',unzipPathESG)]
 
-fout = open('years.csv','w')
-fout.write('country,sourcefile,year\n')
+print(len(unzipPathAR + unzipPathCR + unzipPathESG), 'unzipped')
 
-countriesToSkip = ['ZZ_OTHER']
+fout = open('yearsUK.csv','w')
+fout.write('reporttype,sourcefile,year\n')
 
-for unzipDir in unzipDirs:
-    if unzipDir not in countriesToSkip:
-        print(unzipDir)
-        files = [f for f in listdir(join(unzipPath, unzipDir)) if (isfile(join(unzipPath, unzipDir ,f)) )]
-        #print (len(files), 'files')
+reportTypesToSkip = [] # to use later if we run a subset 
+
+for pair in unzipPaths:
+    reportType = pair[0]
+    unzipPath = pair[1]
+    if reportType not in reportTypesToSkip:
+        print(reportType)
+        files = [f for f in listdir(unzipPath) if isfile(join(unzipPath, f))]
+        print (len(files), 'files')
         for file in files:
             if file.endswith('.pdf') and (not file in corruptFiles):
                 # Get year from first page of PDF
-                path = join(unzipPath, unzipDir, file)
+                path = join(unzipPath, file)
                 year = -2
                 try:
                     year = findModeYearInPDF(path)
@@ -37,6 +43,6 @@ for unzipDir in unzipDirs:
                     print ('Could not open file: ' + file)
 
                 # Update log
-                fout.write(country + ',' + file + ',' + str(year) + '\n')
+                fout.write(reportType + ',' + file + ',' + str(year) + '\n')
                 
 fout.close()
