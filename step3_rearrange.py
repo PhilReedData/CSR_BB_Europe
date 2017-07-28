@@ -15,17 +15,16 @@ countriesToSkip = []
 #countriesToSkip = ['AT', 'CH', 'DE', 'ES', 'FR', 'IE', 'PT', 'SE', 'GB'] # TEMP
 
 unzipPath = "U:/Phil_Read/CSR_Europe/unzipped_raw/"
-outPath = "U:/Phil_Read/CSR_Europe/unzipped_country_yearB/"
+outPath = "U:/Phil_Read/CSR_Europe/unzipped_country_yearC/"
 planPath = 'yearsFilled.csv'
-#planPath = 'stats_yearsFilled.csv' # TEMP 
-logPath = 'statsB.csv'
+logPath = 'statsC.csv'
 
 if isfile(logPath):
     # Continue from before
     log = open(logPath,'a')
 else:
     log = open(logPath,'w')
-    log.write('country,sourcefile,year,yearsource,sic,isin,CRpart,destfile\n')
+    log.write('country,sourcefile,year,yearsource,sic,isin,CRpart,destfile,ticker,name\n')
 
 df = pd.read_csv(planPath)
 # Headings ('country,file,year')
@@ -42,6 +41,8 @@ for index, row in df.iterrows():
     company = companies.getCompanyByBBFilename(country, sourcefile)
     sic = company.sic
     isin = company.isin
+    ticker = company.getTickerShort()
+    name = company.name
     reporttype = 'CR' # Only this for now
     # Try out filenames that do not exist
     # (there are multiple reports for some ticker/year/country)
@@ -70,7 +71,10 @@ for index, row in df.iterrows():
         print ('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
         print ('Could not write to ' + country + '/' + str(year) + '/' + outfilename)
     # Update log
-    log.write(country + ',' + sourcefile + ',' + str(year) + ',' + str(yearsource) + ',' + str(sic) + ',' + isin + ',' + str(copycount) + ',' + outfilename + '\n')
+    lineout = country + ',' + sourcefile + ',' + str(year) + ',' + str(yearsource) 
+    lineout += ',' + str(sic) + ',' + isin + ',' + str(copycount) + ',' + outfilename 
+    lineout += ',' + ticker + ',"' + name + '"\n'
+    log.write(lineout)
 
 
 log.close()

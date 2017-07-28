@@ -34,7 +34,7 @@ class Company(object):
             self.sic = sic
         except Exception:
             # For anything else:
-            self.sic = '0'
+            self.sic = '99'
         self.sicName = sicName
         self.year = -1
     
@@ -45,7 +45,7 @@ class Company(object):
         return self.indexCountry
     
     def getTickerShort(self):
-        return self.tickerFull[:self.tickerFull.index(' ')]
+        return tickerShort = self.tickerFull[:self.tickerFull.index(' ')]
     
     def setYear(self, year):
         self.year = year

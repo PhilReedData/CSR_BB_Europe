@@ -45,7 +45,15 @@ class Company(object):
         return self.indexCountry
     
     def getTickerShort(self):
-        return self.tickerFull[:self.tickerFull.index(' ')]
+        try:
+            tickerShort = self.tickerFull[:self.tickerFull.index(' ')]
+        except ValueError:
+            # BP/ and BT/A are special
+            try:
+                tickerShort = self.tickerFull[:self.tickerFull.index('/')]
+            except ValueError:
+                tickerShort = "UNKNOWN"
+        return tickerShort
     
     def setYear(self, year):
         self.year = year
