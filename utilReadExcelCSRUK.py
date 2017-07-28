@@ -45,14 +45,13 @@ class Company(object):
         return self.indexCountry
     
     def getTickerShort(self):
+        # Remove slash or slashA from tickerFull,
+        # because it's not present in the report filenames.
+        tickerFullNoSlash = self.tickerFull.replace('/A', '').replace('/','')
         try:
-            tickerShort = self.tickerFull[:self.tickerFull.index(' ')]
+            tickerShort = tickerFullNoSlash[:tickerFullNoSlash.index(' ')]
         except ValueError:
-            # BP/ and BT/A are special
-            try:
-                tickerShort = self.tickerFull[:self.tickerFull.index('/')]
-            except ValueError:
-                tickerShort = "UNKNOWN"
+            tickerShort = "ERROR"
         return tickerShort
     
     def setYear(self, year):
@@ -78,7 +77,7 @@ class Companies(object):
         self.companies = companies
         # dict of indexCountry -> (sub)list of companies
         self.companiesByIndexCountry = {}
-        self.noneCompany = Company('UNKNOWN', 'UNKNOWN', '0', 'ZZ', 'ZZUNKNOWN', '0', 'UNKNOWWN')
+        self.noneCompany = Company('UNKNOWN', 'UNKNOWN UNKNOWN', '0', 'ZZ', 'ZZUNKNOWN', '0', 'UNKNOWWN')
         
     def getAllCompanies(self):
         return self.companies
@@ -148,12 +147,13 @@ print(companies)
 gb = 'GB'
 print(len(companies.getCompaniesByIndexCountry(gb)), gb)
 
-# countrytest = 'GB'
-# filenametest = "3i2015.pdf"
-# tickertest = getTickerFromBBFilename(filenametest)
-# print(tickertest, 'ADEN')
-# companytest = companies.getCompanyByBBFilename(countrytest, filenametest)
-# print (companytest)
+countrytest = 'GB'
+filenametest = "010313_VCT_Annual_Report_WC000000002071769321.pdf"
+filenametest = "061609_BP_AnnualYUHO_SD000000002032718254.pdf"
+tickertest = getTickerFromBBFilename(filenametest)
+print(tickertest, 'BP')
+companytest = companies.getCompanyByBBFilename(countrytest, filenametest)
+print (companytest)
 
 # countrytest = 'NO'
 # filenametest = "122908_XXXXX_Corporate_Responsibility_WD000000000096636192.pdf"

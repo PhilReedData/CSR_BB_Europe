@@ -16,9 +16,9 @@ countriesToSkip = []
 unzipPathAR = "U:/Ser-Huang_Poon/UK_ARunzip/"
 unzipPathCR = "U:/Ser-Huang_Poon/UK_CRunzip/"
 unzipPathESG = "U:/Ser-Huang_Poon/UK_ESGunzip/"
-outPath = "U:/Phil_Read/CSR_UK/unzipped_reporttype_year/"
+outPath = "U:/Phil_Read/CSR_UK/unzipped_reporttype_year-2/"
 planPath = 'yearsFilledUK.csv'
-logPath = 'statsUK.csv'
+logPath = 'statsUK-2.csv'
 
 # Dictionary of reporttype to unzipPath
 unzipPathDict = {'AR':unzipPathAR, 'CR':unzipPathCR, 'ESG':unzipPathESG}
@@ -32,7 +32,7 @@ else:
     log.write('reporttype,sourcefile,year,yearsource,sic,isin,Rpart,destfile,ticker,name\n')
 
 df = pd.read_csv(planPath)
-# Headings ('reporttype,sourcefile,year,yearsource')
+# Headings ('reporttype,sourcefile,year,yearsource,metayear')
 
 if not exists(outPath):
     mkdir(outPath)
@@ -42,11 +42,12 @@ for index, row in df.iterrows():
     sourcefile = row["sourcefile"]
     year = row["year"]
     yearsource = row["yearsource"]
+    metayear = row["metayear"]
     print(reporttype, sourcefile, year)
     company = companies.getCompanyByBBFilename('GB', sourcefile)
     sic = company.sic
     isin = company.isin
-    ticker = company.getTickerShort()
+    ticker = company.tickerFull
     name = company.name
     #
     # Try out filenames that do not exist
@@ -85,8 +86,9 @@ for index, row in df.iterrows():
         #raise e
     # Update log
     lineout = reporttype + ',' + sourcefile + ',' + str(year) + ',' + str(yearsource) 
+    lineout += ',' + str(metayear)
     lineout += ',' + str(sic) + ',' + isin + ',' + str(copycount) + ',' + outfilename 
-    lineout += ',' + ticker + ',"' + name + '"\n'
+    lineout += ',"' + ticker + '","' + name + '"\n'
     log.write(lineout)
 
 

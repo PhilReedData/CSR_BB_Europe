@@ -41,7 +41,7 @@ for index, row in df.iterrows():
     company = companies.getCompanyByBBFilename(country, sourcefile)
     sic = company.sic
     isin = company.isin
-    ticker = company.getTickerShort()
+    ticker = company.tickerFull
     name = company.name
     reporttype = 'CR' # Only this for now
     # Try out filenames that do not exist
@@ -73,7 +73,7 @@ for index, row in df.iterrows():
     # Update log
     lineout = country + ',' + sourcefile + ',' + str(year) + ',' + str(yearsource) 
     lineout += ',' + str(sic) + ',' + isin + ',' + str(copycount) + ',' + outfilename 
-    lineout += ',' + ticker + ',"' + name + '"\n'
+    lineout += ',"' + ticker + '","' + name + '"\n'
     log.write(lineout)
 
 

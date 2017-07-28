@@ -5,11 +5,18 @@ YEARSOURCES = {0:'MINED', -1:'FILENAME_PDF-UNOPENED', -2:'FILENAME_PDF-NOYEARFOU
 import pandas as pd
 import numpy as np
 
+import utilGetYearFromPDF
+from os.path import join
+unzipPathAR = "U:/Ser-Huang_Poon/UK_ARunzip/"
+unzipPathCR = "U:/Ser-Huang_Poon/UK_CRunzip/"
+unzipPathESG = "U:/Ser-Huang_Poon/UK_ESGunzip/"
+unzipPathDict = {'AR':unzipPathAR, 'CR':unzipPathCR, 'ESG':unzipPathESG}
+
 pathIn = 'yearsUK.csv'
 pathOut = 'yearsFilledUK.csv'
 
 fout = open(pathOut,'w')
-fout.write('reporttype,sourcefile,year,yearsource\n')
+fout.write('reporttype,sourcefile,year,yearsource,metayear\n')
 
 df = pd.read_csv(pathIn)
 for index, row in df.iterrows():
@@ -29,8 +36,15 @@ for index, row in df.iterrows():
             year = 2000 + int(yyFromFilename)
         except ValueError:
             pass
-            
+    
+    # Get year from metadata too, where possible
+    if reporttype not in unzipPathDict.keys():
+        print ('Report type unknown (' + reporttype + ') for sourcefile: ' + sourcefile)
+        continue
+    unzipPath = unzipPathDict[reporttype]
+    sourcepath = join(unzipPath, sourcefile)
+    metayear = utilGetYearFromPDF.getPDFMetaCreationYear(sourcepath)
     # Update log
-    fout.write(reporttype + ',' + sourcefile + ',' + str(year) + ',' + str(yearsource) + '\n')
+    fout.write(reporttype + ',' + sourcefile + ',' + str(year) + ',' + str(yearsource) +  ',' + str(metayear) + '\n')
 
 fout.close()

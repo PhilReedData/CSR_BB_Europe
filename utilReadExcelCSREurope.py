@@ -45,7 +45,14 @@ class Company(object):
         return self.indexCountry
     
     def getTickerShort(self):
-        return tickerShort = self.tickerFull[:self.tickerFull.index(' ')]
+        # Remove slash or slashA from tickerFull,
+        # because it's not present in the report filenames.
+        tickerFullNoSlash = self.tickerFull.replace('/A', '').replace('/','')
+        try:
+            tickerShort = tickerFullNoSlash[:tickerFullNoSlash.index(' ')]
+        except ValueError:
+            tickerShort = "ERROR"
+        return tickerShort
     
     def setYear(self, year):
         self.year = year

@@ -80,7 +80,7 @@ def getTextContentOfPdfPages(path,startPage=0,endPage=1):
     pdf = PyPDF2.PdfFileReader(p)
     for i in range(startPage, endPage):
         content += pdf.getPage(i).extractText() + "\n"
-    #content = " ".join(content.replace(u"\xa0", " ").strip().split())
+    content = " ".join(content.replace(u"\xa0", " ").strip().split())
     return content
 
 # Look for year in first page, if none found then second page, then third.
@@ -92,12 +92,61 @@ def findModeYearInPDF(path):
             year = findModeYearInText(getTextContentOfPdfPages(path, 2, 3))
     return year
 
+def getPDFMetadata(path):
+    p = file(path, "rb")
+    try:
+        pdf = PyPDF2.PdfFileReader(p)
+        pdf_info = pdf.getDocumentInfo()
+        return pdf_info
+    except ValueError:
+        print ('Error reading: ' + path)
+        return []
+    except Exception:
+        print ('Exception reading: ' + path)
+        return []
+        
     
+def getPDFMetaCreationYear(path):
+    meta = getPDFMetadata(path)
+    if meta == None or len(meta) == 0:
+        # Could not read file
+        return -1
+    keys = meta.keys()
+    creationDateRaw = ""
+    creationYear = -2
+    for key in keys:
+    #for item in meta:
+        #print (item[0])
+        if "creationdate" in key.lower():
+            creationDateRaw = meta[key]
+            break
+    if len(creationDateRaw)>0:
+        # Assume year is first instance of "20xx"
+        try:
+            start = creationDateRaw.index('20')
+            creationYearString = creationDateRaw[start:start+4]
+            creationYear = int (creationYearString)
+        except ValueError:
+            pass
+        except Exception:
+            pass
+    return creationYear
 
 if __name__ == "__main__":
-    y = findModeYearInText("2001 2006 2009 200120092008")
-    print('mode',y)
+    #y = findModeYearInText("2001 2006 2009 200120092008")
+    #print('mode',y)
     
-    y = findModeYearInPDF("U:/Phil_Read/CSR_Europe/unzipped_raw/CH/122908_ADEN_Corporate_Responsibility_WD000000000096636192.pdf")
-    print('mode',y)
+    #y = findModeYearInPDF("U:/Phil_Read/CSR_Europe/unzipped_raw/CH/122908_ADEN_Corporate_Responsibility_WD000000000096636192.pdf")
+    path = "U:/Phil_Read/CSR_Europe/unzipped_raw/AT/060910_TKA_Corporate_Responsibility_SD000000002004960095.pdf"
+    #t = getTextContentOfPdfPages(path, 0, 1)
+    #print (t)
+    #y = findModeYearInText(t)
+    #print('mode page1',y)
+    #y = findModeYearInText(getTextContentOfPdfPages(path, 1, 2))
+    #print('mode page2',y)
+    
+    #meta = getPDFMetadata(path) 
+    #print(str(meta))
+    y = getPDFMetaCreationYear(path)
+    print ('meta creation year',y)
     
