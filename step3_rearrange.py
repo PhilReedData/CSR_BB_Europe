@@ -24,10 +24,10 @@ if isfile(logPath):
     log = open(logPath,'a')
 else:
     log = open(logPath,'w')
-    log.write('country,sourcefile,year,yearsource,sic,isin,CRpart,destfile,ticker,name\n')
+    log.write('country,sourcefile,year,yearsource,metayear,sic,isin,CRpart,destfile,ticker,name\n')
 
 df = pd.read_csv(planPath)
-# Headings ('country,file,year')
+# Headings ('country,file,year,yearsource,metayear')
 
 if not exists(outPath):
     mkdir(outPath)
@@ -37,6 +37,7 @@ for index, row in df.iterrows():
     sourcefile = row["sourcefile"]
     year = row["year"]
     yearsource = row["yearsource"]
+    metayear = row["metayear"]
     print(country, sourcefile, year)
     company = companies.getCompanyByBBFilename(country, sourcefile)
     sic = company.sic
@@ -72,6 +73,7 @@ for index, row in df.iterrows():
         print ('Could not write to ' + country + '/' + str(year) + '/' + outfilename)
     # Update log
     lineout = country + ',' + sourcefile + ',' + str(year) + ',' + str(yearsource) 
+    lineout += ',' + str(metayear)
     lineout += ',' + str(sic) + ',' + isin + ',' + str(copycount) + ',' + outfilename 
     lineout += ',"' + ticker + '","' + name + '"\n'
     log.write(lineout)

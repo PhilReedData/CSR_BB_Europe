@@ -29,7 +29,7 @@ if isfile(logPath):
 else:
     log = open(logPath,'w')
     # Rpart is called copycount later
-    log.write('reporttype,sourcefile,year,yearsource,sic,isin,Rpart,destfile,ticker,name\n')
+    log.write('reporttype,sourcefile,year,yearsource,metayear,sic,isin,Rpart,destfile,ticker,name\n')
 
 df = pd.read_csv(planPath)
 # Headings ('reporttype,sourcefile,year,yearsource,metayear')
