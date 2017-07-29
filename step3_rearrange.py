@@ -15,7 +15,7 @@ countriesToSkip = []
 #countriesToSkip = ['AT', 'CH', 'DE', 'ES', 'FR', 'IE', 'PT', 'SE', 'GB'] # TEMP
 
 unzipPath = "U:/Phil_Read/CSR_Europe/unzipped_raw/"
-outPath = "U:/Phil_Read/CSR_Europe/unzipped_country_yearC/"
+outPath = "U:/Phil_Read/CSR_Europe/unzipped_country_year/"
 planPath = 'yearsFilled.csv'
 logPath = 'stats.csv'
 
