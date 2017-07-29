@@ -16,9 +16,9 @@ countriesToSkip = []
 unzipPathAR = "U:/Ser-Huang_Poon/UK_ARunzip/"
 unzipPathCR = "U:/Ser-Huang_Poon/UK_CRunzip/"
 unzipPathESG = "U:/Ser-Huang_Poon/UK_ESGunzip/"
-outPath = "U:/Phil_Read/CSR_UK/unzipped_reporttype_year-2/"
+outPath = "U:/Phil_Read/CSR_UK/unzipped_reporttype_year-3/"
 planPath = 'yearsFilledUK.csv'
-logPath = 'statsUK-2.csv'
+logPath = 'statsUK-3.csv'
 
 # Dictionary of reporttype to unzipPath
 unzipPathDict = {'AR':unzipPathAR, 'CR':unzipPathCR, 'ESG':unzipPathESG}
@@ -29,10 +29,13 @@ if isfile(logPath):
 else:
     log = open(logPath,'w')
     # Rpart is called copycount later
-    log.write('reporttype,sourcefile,year,yearsource,metayear,sic,isin,Rpart,destfile,ticker,name\n')
+    headline = 'reporttype,sourcefile,format,'
+    headline += 'bestyear,yearsource,metayear,minedyear,uploadyear,'
+    headline += 'sic,isin,Rpart,destfile,ticker,name\n'
+    log.write(headline)
 
 df = pd.read_csv(planPath)
-# Headings ('reporttype,sourcefile,year,yearsource,metayear')
+# Headings ('reporttype,sourcefile,format,bestyear,yearsource,metayear,minedyear,uploadyear')
 
 if not exists(outPath):
     mkdir(outPath)
@@ -40,9 +43,13 @@ if not exists(outPath):
 for index, row in df.iterrows():
     reporttype = row["reporttype"]
     sourcefile = row["sourcefile"]
-    year = row["year"]
+    format = row["format"]
+    ext = '.' + format
+    year = row["bestyear"]
     yearsource = row["yearsource"]
     metayear = row["metayear"]
+    minedyear = row["minedyear"]
+    uploadyear = row["uploadyear"]
     print(reporttype, sourcefile, year)
     company = companies.getCompanyByBBFilename('GB', sourcefile)
     sic = company.sic
@@ -53,14 +60,14 @@ for index, row in df.iterrows():
     # Try out filenames that do not exist
     # (there are multiple reports for some ticker/year/reporttype)
     copycount = 1
-    outfilename = sic + '_' + isin + '_' + reporttype +str(copycount)+'.pdf'
+    outfilename = sic + '_' + isin + '_' + reporttype +str(copycount)+ext
     #print(outfilename)
     while isfile(join(outPath, reporttype+'/'+str(year)+'/'+outfilename)):
         # Increment suffix until no overwriting possible
         copycount += 1
-        outfilename = sic + '_' + isin + '_' + reporttype +str(copycount)+'.pdf'
+        outfilename = sic + '_' + isin + '_' + reporttype +str(copycount)+ext
     
-    outfilename = sic + '_' + isin + '_' + reporttype +str(copycount)+'.pdf'
+    outfilename = sic + '_' + isin + '_' + reporttype +str(copycount)+ext
     outfilepath =  join(outPath, reporttype+'/'+str(year)+'/'+outfilename)
     if not exists(join(outPath, reporttype)):
         mkdir(join(outPath, reporttype))
@@ -85,8 +92,9 @@ for index, row in df.iterrows():
         print ('Could not write to ' + reporttype + '/' + str(year) + '/' + outfilename)
         #raise e
     # Update log
-    lineout = reporttype + ',' + sourcefile + ',' + str(year) + ',' + str(yearsource) 
-    lineout += ',' + str(metayear)
+    lineout = reporttype + ',' + sourcefile + ',' + format
+    lineout += ',' + str(year) + ',' + str(yearsource) 
+    lineout += ',' + str(metayear) + ',' + str(minedyear) + ',' + str(uploadyear)
     lineout += ',' + str(sic) + ',' + isin + ',' + str(copycount) + ',' + outfilename 
     lineout += ',"' + ticker + '","' + name + '"\n'
     log.write(lineout)
