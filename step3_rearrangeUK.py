@@ -16,9 +16,9 @@ countriesToSkip = []
 unzipPathAR = "U:/Ser-Huang_Poon/UK_ARunzip/"
 unzipPathCR = "U:/Ser-Huang_Poon/UK_CRunzip/"
 unzipPathESG = "U:/Ser-Huang_Poon/UK_ESGunzip/"
-outPath = "U:/Phil_Read/CSR_UK/unzipped_reporttype_year-3/"
+outPath = "U:/Phil_Read/CSR_UK/unzipped_reporttype_year/"
 planPath = 'yearsFilledUK.csv'
-logPath = 'statsUK-3.csv'
+logPath = 'statsUK.csv'
 
 # Dictionary of reporttype to unzipPath
 unzipPathDict = {'AR':unzipPathAR, 'CR':unzipPathCR, 'ESG':unzipPathESG}

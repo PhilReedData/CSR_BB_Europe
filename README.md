@@ -8,8 +8,6 @@ Run the stages in the order below.
 3. Rearrange files
 4. Detect language
 
-Also 0. testing
-
 ## Summary
 There is a script for the Europe dataset 
 and a similar script for the extended UK dataset for each step.
@@ -22,15 +20,17 @@ and a similar script for the extended UK dataset for each step.
 	- folder per country (2-digit ISO)
 	- filename: unchanged. UPLOADDATE\_TICKER\_OTHER.pdf where UPLOADDATE is MMDDYY
 
+### Step 1a. Copy IN
+- Copy in any fixed PDF scripts that had been unreadable by Python before.
+
 ### Step 2. Mine the year
 - Per country, read first page of PDF to determine year. (Takes a few hours.)
 - If not found in first page, look in second, then third, then give up.
-- What about .htm files? Or .txt files? Most (98%) are .pdf format for Europe.
-  - Also copy the .htm files for UK script (will add this feature to Europe).
+- What about .htm files? Or .txt files? Most (98%) are .pdf format for Europe. UK has more .htm files.
+  - Also copy the .htm files. Ignore the few .docx, .txt, .xlsx files.
 
 ### Step 2a. Fill year gaps
 - As well as mined year (above), get year from metadata in report, and from date of upload in filename.
-- (For UK for now, will implement for Europe soon...)
 - Choose the best year based on:
   - Use metadata year, if found
   - Else use mined year, if found
@@ -44,7 +44,7 @@ and a similar script for the extended UK dataset for each step.
 - Reads the Bloomberg Excel identifiers workbook to get ISIN, SIC (matching on Ticker).
 - Reads a CSV file of country, file, year
 - Output format:
-	- folder per country (2-digit ISO), folder per year (or -2 unfound, -1 encrypted)
+	- folder per country (2-digit ISO), folder per year (or -1, use bestyear)
 	- filename: SIC\_ISIN\_TYPEn.pdf where TYPE is CR and _n_ is number for multiple reports
 	
 ### Step 4. Detect language
@@ -54,7 +54,8 @@ and a similar script for the extended UK dataset for each step.
 - Return two letter language code, or '-1' if failed.
 - Only for Europe dataset for now, ignores the 'GB' data for speed.
   - Some GB files need to be skipped, have not yet identified which.
-
+- Will later extend to search more than 5 pages if language not found. 
+- Does not apply to .htm files yet.
 
 ## Utililities
 ### utilCSR

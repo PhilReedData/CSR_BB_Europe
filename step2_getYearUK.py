@@ -50,7 +50,7 @@ for pair in unzipPaths:
                     #print (file, year)
                 except Exception as e:
                     year = -1
-                    print ('Could not open file: ' + file)
+                    print ('Could not read file: ' + file)
 
                 # Update log
                 fout.write(reportType + ',' + file + ',pdf,' + str(year) + '\n')
@@ -63,7 +63,7 @@ for pair in unzipPaths:
                     year = findModeYearInHTM(path)
                 except:
                     year = -1
-                    print ('Could not open file: ' +file)
+                    print ('Could not read file: ' +file)
                 
                 # Update log
                 fout.write(reportType + ',' + file + ',htm,' + str(year) + '\n')
