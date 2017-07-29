@@ -30,16 +30,24 @@ and a similar script for the extended UK dataset for each step.
   - Also copy the .htm files. Ignore the few .docx, .txt, .xlsx files.
 
 ### Step 2a. Fill year gaps
-- As well as mined year (above), get year from metadata in report, and from date of upload in filename.
-- Choose the best year based on:
-  - if metadata year is greater than 0 (and less than upload year), use metadata year
-  - Else if mined year is greater than 0 (and less than upload year), use mined year
-  - Else use -1
-- Upload year is never used as the year, as reports are often uploaded in bulk for many years at a time by Bloomberg. It just serves as a sanity check.
-- Keep bestyear, minedyear, metadatayear and upload year, plus yearsource...
-  - yearsource explains which year was chosen for bestyear
-  - 10 for metadatayear, 20 for minedyear, -1 for no year.
+The year identification process is as follows. 
+- We consider three kinds of detection of year:
+  - "metayear": the year from the PDF metadata creation date, or year in the HTML title field.
+  - "minedyear": the most frequent year mined from the first page of the PDF (or second or third page if none found), or from the entire HTML document.
+  - "uploadyear": the year from the filename denoting upload date by Bloomberg.
+- We do not trust uploadyear as often many years of documents were uploaded around the same date. However it is used as a sanity check when considering the metayear or minedyear values - the report date cannot be after the document was uploaded.
+- We choose the "bestyear" by the following method.
+  - If metayear is found, and is less than or equal to uploadyear, choose metayear.
+  - Else if minedyear is found, and is less than or equal to uploadyear, choose uploadyear.
+  - Else give up (value -1)
+The reports are copied into folders by year (or -1).
 
+Also, the "yearsource" field has been revised. It still identifies which year detection method was chosen. The values are as follows.
+- "10": metayear
+- "20": minedyear
+- "-1": none
+ 
+  
 ### Step 3. Rearrange
 - Create new filenames and copy the files. 
 - Reads the Bloomberg Excel identifiers workbook to get ISIN, SIC (matching on Ticker).

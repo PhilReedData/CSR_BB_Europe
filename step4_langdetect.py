@@ -11,8 +11,8 @@ import numpy as np
 from os.path import join
 
 unzipPath = "U:/Phil_Read/CSR_Europe/unzipped_raw/"
-statsPathIn = 'statsB.csv'
-statsPathOut = 'statsB_langB.csv'
+statsPathIn = 'stats.csv'
+statsPathOut = 'stats_lang.csv'
 logPath = 'log_lang.csv'
 with open(logPath, 'w') as logFile:
     logFile.write('country, sourcefile, lang\n')
