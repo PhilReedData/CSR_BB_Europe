@@ -1,4 +1,5 @@
 #!/usr/bin/python    
+# Remember to delete or rename any existing outPath before running!
 
 import utilReadExcelCSREurope
 from utilReadExcelCSREurope import companies
@@ -19,15 +20,15 @@ outPath = "U:/Phil_Read/CSR_Europe/unzipped_country_year/"
 planPath = 'yearsFilled.csv'
 logPath = 'stats.csv'
 
-if isfile(logPath):
-    # Continue from before
-    log = open(logPath,'a')
-else:
-    log = open(logPath,'w')
-    headline = 'country,sourcefile,format,'
-    headline += 'bestyear,yearsource,metayear,minedyear,uploadyear,'
-    headline += 'sic,isin,Rpart,destfile,ticker,name\n'
-    log.write(headline)
+# if isfile(logPath):
+    # # Continue from before
+    # log = open(logPath,'a')
+#else:
+log = open(logPath,'w')
+headline = 'country,sourcefile,format,'
+headline += 'bestyear,yearsource,metayear,minedyear,uploadyear,'
+headline += 'sic,isin,Rpart,destfile,ticker,name\n'
+log.write(headline)
 
 df = pd.read_csv(planPath)
 # Headings ('country,sourcefile,format,bestyear,yearsource,metayear,minedyear,uploadyear')

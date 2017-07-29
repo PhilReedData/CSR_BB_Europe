@@ -47,7 +47,7 @@ class Company(object):
     def getTickerShort(self):
         # Remove slash or slashA from tickerFull,
         # because it's not present in the report filenames.
-        tickerFullNoSlash = self.tickerFull.replace('/A', '').replace('/','')
+        tickerFullNoSlash = self.tickerFull.replace('/','')
         try:
             tickerShort = tickerFullNoSlash[:tickerFullNoSlash.index(' ')]
         except ValueError:

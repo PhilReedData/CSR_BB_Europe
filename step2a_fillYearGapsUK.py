@@ -51,10 +51,10 @@ for index, row in df.iterrows():
             uploadyear = -1
                 
         # Decide bestyear 
-        if metayear > 0:
+        if metayear > 0 and metayear <= uploadyear:
             bestyear = metayear
             yearsource = 10
-        elif minedyear > 0:
+        elif minedyear > 0 and minedyear <= uploadyear:
             bestyear = minedyear
             yearsource = 20
         else:

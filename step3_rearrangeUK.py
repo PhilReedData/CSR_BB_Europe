@@ -1,4 +1,5 @@
 #!/usr/bin/python    
+# Remember to delete or rename any existing outPath before running!
 
 import utilReadExcelCSRUK
 from utilReadExcelCSRUK import companies
@@ -23,16 +24,16 @@ logPath = 'statsUK.csv'
 # Dictionary of reporttype to unzipPath
 unzipPathDict = {'AR':unzipPathAR, 'CR':unzipPathCR, 'ESG':unzipPathESG}
 
-if isfile(logPath):
-    # Continue from before
-    log = open(logPath,'a')
-else:
-    log = open(logPath,'w')
-    # Rpart is called copycount later
-    headline = 'reporttype,sourcefile,format,'
-    headline += 'bestyear,yearsource,metayear,minedyear,uploadyear,'
-    headline += 'sic,isin,Rpart,destfile,ticker,name\n'
-    log.write(headline)
+# if isfile(logPath):
+    # # Continue from before
+    # log = open(logPath,'a')
+#else:
+log = open(logPath,'w')
+# Rpart is called copycount later
+headline = 'reporttype,sourcefile,format,'
+headline += 'bestyear,yearsource,metayear,minedyear,uploadyear,'
+headline += 'sic,isin,Rpart,destfile,ticker,name\n'
+log.write(headline)
 
 df = pd.read_csv(planPath)
 # Headings ('reporttype,sourcefile,format,bestyear,yearsource,metayear,minedyear,uploadyear')

@@ -47,7 +47,7 @@ class Company(object):
     def getTickerShort(self):
         # Remove slash or slashA from tickerFull,
         # because it's not present in the report filenames.
-        tickerFullNoSlash = self.tickerFull.replace('/A', '').replace('/','')
+        tickerFullNoSlash = self.tickerFull.replace('/','')
         try:
             tickerShort = tickerFullNoSlash[:tickerFullNoSlash.index(' ')]
         except ValueError:
@@ -150,8 +150,9 @@ print(len(companies.getCompaniesByIndexCountry(gb)), gb)
 countrytest = 'GB'
 filenametest = "010313_VCT_Annual_Report_WC000000002071769321.pdf"
 filenametest = "061609_BP_AnnualYUHO_SD000000002032718254.pdf"
+filenametest = "123112_BTA_Corporate_Responsibility_US000000002079238336.pdf"
 tickertest = getTickerFromBBFilename(filenametest)
-print(tickertest, 'BP')
+print(tickertest, 'BTA')
 companytest = companies.getCompanyByBBFilename(countrytest, filenametest)
 print (companytest)
 

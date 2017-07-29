@@ -32,9 +32,10 @@ and a similar script for the extended UK dataset for each step.
 ### Step 2a. Fill year gaps
 - As well as mined year (above), get year from metadata in report, and from date of upload in filename.
 - Choose the best year based on:
-  - Use metadata year, if found
-  - Else use mined year, if found
-  - Else report -1
+  - if metadata year is greater than 0 (and less than upload year), use metadata year
+  - Else if mined year is greater than 0 (and less than upload year), use mined year
+  - Else use -1
+- Upload year is never used as the year, as reports are often uploaded in bulk for many years at a time by Bloomberg. It just serves as a sanity check.
 - Keep bestyear, minedyear, metadatayear and upload year, plus yearsource...
   - yearsource explains which year was chosen for bestyear
   - 10 for metadatayear, 20 for minedyear, -1 for no year.
