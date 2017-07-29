@@ -48,14 +48,15 @@ and a similar script for the extended UK dataset for each step.
 	- filename: SIC\_ISIN\_TYPEn.pdf where TYPE is CR and _n_ is number for multiple reports
 	
 ### Step 4. Detect language
-- Read first 5 pages of PDFs to detect most likely/common language.
+- Read first 5 (or next 5) pages of PDFs to detect most likely/common language.
+- If HTM file, read entire plain text contents.
 - Add an extra column to the stats.csv as stats_lang.csv
 - Use Google Translate implementation.
 - Return two letter language code, or '-1' if failed.
 - Only for Europe dataset for now, ignores the 'GB' data for speed.
   - Some GB files need to be skipped, have not yet identified which.
-- Will later extend to search more than 5 pages if language not found. 
-- Does not apply to .htm files yet.
+- Extend search to next 5 pages of PDF if language not found. 
+- Does not look at metadata!
 
 ## Utililities
 ### utilCSR

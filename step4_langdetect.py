@@ -2,8 +2,8 @@
 
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
-import PyPDF2 # replace pyPdf with PyPDF2 ?
-#from pyPdf.utils import PdfReadError # No longer used, remove
+import PyPDF2
+from bs4 import BeautifulSoup
 
 import pandas as pd
 import numpy as np
@@ -17,8 +17,8 @@ logPath = 'log_lang.csv'
 with open(logPath, 'w') as logFile:
     logFile.write('country, sourcefile, lang\n')
 
-# Get the text of first 5 pages of given PDF file.
-def getTextContentOfPdfPages(path, num_pages=5):
+# Get the text of first 5 pages of given PDF file, or other range.
+def getTextContentOfPdfPages(path, start=0, end=5):
     content = ""
     p = file(path, "rb")
     try:
@@ -26,14 +26,35 @@ def getTextContentOfPdfPages(path, num_pages=5):
     except:
         print ('Error reading file: ' + path)
         return content # can't open file.
-    for i in range(0, num_pages):
+    for i in range(start, end):
         try:
             content += pdf.getPage(i).extractText() + "\n"
         except Exception:
             print ('Problem reading page '+ str(i+1) +': ' + path)
             pass # may not be that many pages!
-    #content = " ".join(content.replace(u"\xa0", " ").strip().split())
+    content = " ".join(content.replace(u"\xa0", " ").strip().split())
     return content
+
+def getPlainTextFromHTML(html):
+    soup = BeautifulSoup(html)
+    # kill all script and style elements
+    for script in soup(["script", "style"]):
+        script.extract()    # rip it out
+    # get text
+    text = soup.get_text()
+    # break into lines and remove leading and trailing space on each
+    lines = (line.strip() for line in text.splitlines())
+    # break multi-headlines into a line each
+    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+    # drop blank lines
+    text = '\n'.join(chunk for chunk in chunks if chunk)
+    return text    
+
+def getPlainTextFromHTMLPath(path):
+    file = open(path, 'r')
+    text = getPlainTextFromHTML(file.read())
+    file.close()
+    return getPlainTextFromHTML(text)
     
 # Detect the language of the report
 def getLang(country,filename):
@@ -47,15 +68,31 @@ def getLang(country,filename):
         ]
     if filename in filenamesToSkip:
         return '-2' # corrupt file
+    if not filename.endswith('.pdf'):
+        return '-3' # not implemented HTM file yet
 
     fullPath = join(unzipPath, country + '/' + filename)
     print ('Reading: ' + fullPath)
-    page1text = getTextContentOfPdfPages(fullPath)
+    
+    textToTest = ""
+    if filename.endswith('.pdf'):
+        textToTest = getTextContentOfPdfPages(fullPath)
+    elif filename.endswith('.htm'):
+        textToTest = getPlainTextFromHTMLPath(fullPath)
     try:
-        lang = detect(page1text)
+        lang = detect(textToTest)
     except LangDetectException:
         lang = '-1'
     print ('Detected: ' + lang)
+    
+    # Extend search if not found and PDF
+    if (filename.endswith('.pdf')) and (lang=='-1'):
+        textToTest = getTextContentOfPdfPages(fullPath, 5, 10)
+        try:
+            lang = detect(textToTest)
+        except LangDetectException:
+            lang = '-1'
+        print ('Detected: ' + lang)
     with open(logPath, 'a') as logFile:
         logFile.write(country+', '+filename+','+lang+'\n')
     return lang
