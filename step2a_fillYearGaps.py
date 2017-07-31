@@ -30,7 +30,7 @@ for index, row in df.iterrows():
         # Get year from metadata, where possible
         sourcepath = join(unzipPath, country+'/'+sourcefile)
         if format=='pdf':
-            metayear = utilGetYearFromPDF.getPDFMetaCreationYear(sourcepath)
+            metayear = utilGetYearFromPDF.getPDFMetaCreationYear(sourcepath) - 1
         elif format=='htm':
             metayear = utilGetYearFromHTM.getHTMMetaYear(sourcepath)
         else:

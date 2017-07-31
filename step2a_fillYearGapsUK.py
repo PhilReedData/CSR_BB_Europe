@@ -37,7 +37,7 @@ for index, row in df.iterrows():
         unzipPath = unzipPathDict[reporttype]
         sourcepath = join(unzipPath, sourcefile)
         if format=='pdf':
-            metayear = utilGetYearFromPDF.getPDFMetaCreationYear(sourcepath)
+            metayear = utilGetYearFromPDF.getPDFMetaCreationYear(sourcepath) - 1
         elif format=='htm':
             metayear = utilGetYearFromHTM.getHTMMetaYear(sourcepath)
         else:

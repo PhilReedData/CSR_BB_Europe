@@ -32,7 +32,7 @@ and a similar script for the extended UK dataset for each step.
 ### Step 2a. Fill year gaps
 The year identification process is as follows. 
 - We consider three kinds of detection of year:
-  - "metayear": the year from the PDF metadata creation date, or year in the HTML title field.
+  - "metayear": the year from the PDF metadata creation date minus 1, or year in the HTML title field.
   - "minedyear": the most frequent year mined from the first page of the PDF (or second or third page if none found), or from the entire HTML document.
   - "uploadyear": the year from the filename denoting upload date by Bloomberg.
 - We do not trust uploadyear as often many years of documents were uploaded around the same date. However it is used as a sanity check when considering the metayear or minedyear values - the report date cannot be after the document was uploaded.
