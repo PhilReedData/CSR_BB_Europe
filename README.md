@@ -9,14 +9,12 @@ Determine the year of the report from its metadata or content, also consider the
 - The CSR, ESG and AR reports are in PDF or HTM format. Other formats are ignored.
 - The reports contain the company ticker in the filename, after the upload date.
 - The reference worksheet contains the same ticker*, company name, SIC, ISIN and other codes.
-  - * The ticker in the filenames will exclude any slash '/' characters.
+  - \* The ticker in the filenames will exclude any slash '/' characters.
 
 ## Outputs
 - The reports are rearranged by country or report type, then by year, into folders.
 - The reports are renamed by SIC and ISIN codes, report type, then a counter if there is more than one in that folder. 
-- A reference table of all the reports and several identifiers is produced.
-- The language detection produces a separate table.
-  - Could join this into the previous table.
+- A reference table of all the reports and several identifiers is produced, with several intermediate tables.
 - Any reports where the year could not be determined get year value -1.
   
 ## Contents
@@ -25,6 +23,7 @@ Run the stages in the order below.
 2. Find year and rearrange 
 3. Rearrange files
 4. Detect language
+
 There are utility scripts described at the end of this document.
 
 ## Method
@@ -38,21 +37,22 @@ To do: merge the Europe and the UK scripts into one process.
 - Unzip all reports. One folder per country (index). 
 - All years and report types mixed up. 
 - Output format:
-	- folder per country (2-digit ISO)
-	- filename: unchanged. `UPLOADDATE\_TICKER\_OTHER.pdf` where `UPLOADDATE` is `MMDDYY`
+	- folder per country ([2-digit ISO](http://www.nationsonline.org/oneworld/country_code_list.htm))
+	- filename: unchanged. `UPLOADDATE_TICKER_OTHER.pdf` where `UPLOADDATE` is `MMDDYY`
 - UK: the files were already unzipped to one folder per report type.
 - UK: the `reporttype` has values:
   - AR: annual report
   - CR: corporate sustainability report
   - ESG: economic, social and governance report  
 
-### Step 1a. Copy IN
+### Step 1a. Copy In
 - Copy in any fixed PDF scripts that had been unreadable by Python before.
 
 ### Step 2. Mine the year
 - Per country, read first page of PDF to determine year. (Takes a few hours.)
 - If not found in first page, look in second, then third, then give up.
-- Most (98%) are .pdf format for Europe, copy these and .htm. Ignore the few .docx, .txt, .xlsx files.
+- Most (98%) are .pdf format for Europe, copy these and .htm files. 
+  - Ignore the few .docx, .txt, .xlsx files.
 - UK: Per report type rather than country.
 - UK: Greater proportion are .htm than for Europe.
 
@@ -70,9 +70,9 @@ The year identification process is as follows.
 The reports are copied into folders by year (or -1).
 
 The `yearsource` field identifies which year detection method was chosen. The values are as follows.
-- "10": metayear
-- "20": minedyear
-- "30": minedyear but human-read
+- "10": `metayear`
+- "20": `minedyear`
+- "30": `minedyear` but human-read
 - "-1": none
 
 Note that the "30" category is not used in any code here, it is for any manual additions made later on reports which the computer could not read a year from.
@@ -83,12 +83,12 @@ Note that the "30" category is not used in any code here, it is for any manual a
 - Reads a CSV file of country, file, year
 - Output format of `stats.csv`:
 	- folder per country (2-digit ISO), folder per year (or -1, use `bestyear`)
-	- filename: `SIC\_ISIN\_TYPE_n_.pdf` where `TYPE` is CR and `_n_` is number for multiple reports
-- UK: use report type instead of country.
+	- filename: `SIC_ISIN_TYPEn.pdf` where `TYPE` is CR and `n` is number for multiple reports
+- UK: use report type instead of country for folders.
 - UK: the `TYPE` could be AR, CR or ESG.
 	
 ### Step 4. Detect language
-- Read first 5 (or next 5) pages of PDFs to detect most likely/common language.
+- Read first 5 (or next 5 if none found) pages of PDFs to detect most likely/common language.
 - If HTM file, read entire plain text contents.
 - Add an extra column to the `stats.csv` as `stats_lang.csv`
 - Use Google Translate implementation.
@@ -106,13 +106,15 @@ Convertions etc., including dictionary of index code to country code.
 
 ### utilGetYearFromPDF
 Interprets the first page of a PDF (or any text) and finds the most recent most frequent year.
-- There is much room for improvement here!
-- If the year is given as a range (either 2015-2016 or 2015-2016) this counts as the later year. Only works for ASCII hyphen.
-- The any full year in a year range gets counted extra.
+- **There is much room for improvement here!**
+- Each instance of 2000 to 2019 is counted.
+- If the year is given as a range (either 2015-16 or 2015-2016) this counts as the later year. Only works for ASCII hyphen.
+- If a year range is found, the whole years within it get counted twice.
 - Does not consider whitespace or word boundaries/tokens, ie 120178 would be picked up a year.
 - If first page does not return a year, look at second, then third, then quit.
 
-Includes a function to get the year from any CreationDate metadata field.
+Includes a function to get the year from any creation date metadata field.
+- Looks for a field containing `CreationDate` (case insensitive) and pulls out the year.
 
 ### utilGetYearFromHTM
 Uses the same method as `utilGetYearFromPDF` (calls this script) 
