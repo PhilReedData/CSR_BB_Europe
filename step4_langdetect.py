@@ -68,8 +68,8 @@ def getLang(country,filename):
         ]
     if filename in filenamesToSkip:
         return '-2' # corrupt file
-    if not filename.endswith('.pdf'):
-        return '-3' # not implemented HTM file yet
+    if not (filename.endswith('.pdf') or filename.endswith('.htm')):
+        return '-3' # not implemented other files yet
 
     fullPath = join(unzipPath, country + '/' + filename)
     print ('Reading: ' + fullPath)
