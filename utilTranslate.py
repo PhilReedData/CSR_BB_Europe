@@ -6,6 +6,9 @@
 # 2017-09-19
 
 import codecs 
+import time
+from os import makedirs
+from os.path import exists
 
 # test input, in Swedish
 input = u'''
@@ -52,12 +55,15 @@ translator = Translator()
 
 # METHOD 2
 def translateToEn(input):
+    charsS = str(len(input))
+    print('Pausing 1 second before translating ' + charsS +' chars')
+    time.sleep(1)
     result = translator.translate(input)
     return result.text
 
 # Take the whole report (string) and return the whole translation. 
 def translateInChunks(input):
-    chunkSize = 1000
+    chunkSize = 5000
     chars = len(input)
     charsS = str(chars)
     print('Input has ' + charsS + ' character(s)')
@@ -68,22 +74,41 @@ def translateInChunks(input):
     result = translateToEn(input)
     return result
 
-def test_load(fileIn=fileInLarge):
+def loadFile(fileIn=fileInLarge):
     with codecs.open(fileIn, 'r', encoding='utf8', errors='ignore') as fileIn:
         foreignText = fileIn.read()
     return foreignText
     # Do translation, don't overload server
     #chars = str(len(foreignText))
 
+def writeFile(englishText, path):
+    with codecs.open(path, 'w', encoding='utf8', errors='ignore') as fileOut:
+        fileOut.write(englishText)
 
 if __name__ == "__main__":
     #result = translator.translate(input)
-    foreignText = test_load(fileInSV)
-    resultText = translateInChunks(foreignText)
+    #foreignText = loadFile(fileInSV)
+    #resultText = translateInChunks(foreignText)
     #result = translator.translate(foreignText)
     #resultSrc = result.src
     #resultDest = result.dest # = 'en'
     #resultText = result.text
     #resultPronunciation = result.pronunciation # = None
     #print ('Translated from '+ resultSrc + ' to ' + resultDest + ':')
-    print (resultText[:200] + '...')
+    #print (resultText[:200] + '...')
+    
+    # Read in list to translate, save back
+    fromDir = "U:/Phil_Read/CSR_UK_latest_txt_all_flat/"
+    toDir = "U:/Phil_Read/CSR_UK_latest_txt_all_flat_trns/"
+    listPath = "./x_toBeTranslated.txt"
+    if not exists(toDir):
+        makedirs(toDir)
+    foreignReports = open(listPath,'r').read().split('\n')
+    for filename in foreignReports[:1]: # TEMP LIMIT TO FIRST REPORT
+        print ('Read from ' + fromDir + filename)
+        foreignText = loadFile(fromDir + filename) # should use os join
+        resultText = translateInChunks(foreignText)
+        charsOut = str(len(resultText))
+        print ('Writing ' + charsOut + ' character(s).')
+        writeFile(resultText, toDir+filename)
+
