@@ -22,7 +22,7 @@ from shutil import copyfile, copy2
 import time
 import codecs
 
-doTranslate = True
+doTranslate = False
 # If doTranslate, do we copy the non-translated reports too?
 copyNonTranslated = True
 

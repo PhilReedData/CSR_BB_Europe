@@ -5,10 +5,16 @@
 # Translate text to English
 # 2017-09-19
 
+# Make Python 2 behave like Python 3 for / and // division:
+from __future__ import division
+
 import codecs 
 import time
 from os import makedirs
 from os.path import exists
+from math import ceil
+
+
 
 # test input, in Swedish
 input = u'''
@@ -62,17 +68,28 @@ def translateToEn(input):
     return result.text
 
 # Take the whole report (string) and return the whole translation. 
+# For now, crudely break every 5000 characters.
 def translateInChunks(input):
     chunkSize = 5000
-    chars = len(input)
-    charsS = str(chars)
-    print('Input has ' + charsS + ' character(s)')
-    if chars > chunkSize:
-        print ('Too big, just use first ' + str(chunkSize) + ' characters.')
-        input = input[:chunkSize]
+    charsTranslated = 0
+    charsTotal = len(input)
+    charsS = str(charsTotal)
+    chunksTranslated = 0
+    numChunks = int(ceil(charsTotal / chunkSize))
+    resultSoFar = u''
+    print('Input has ' + charsS + ' character(s), break into ' + str(numChunks)+ ' chunk(s)')
     
-    result = translateToEn(input)
-    return result
+    while (charsTranslated < charsTotal):
+        start = charsTranslated
+        end = start + chunkSize
+        if end > charsTotal:
+            end = charsTotal
+        #print ('chunksTranslated', chunksTranslated, 'charsTranslated (start)', charsTranslated, 'end', end)
+        resultSoFar  += translateToEn(input[start:end])
+        chunksTranslated += 1
+        charsTranslated += (end - start)
+    
+    return resultSoFar
 
 def loadFile(fileIn=fileInLarge):
     with codecs.open(fileIn, 'r', encoding='utf8', errors='ignore') as fileIn:
@@ -104,7 +121,7 @@ if __name__ == "__main__":
     if not exists(toDir):
         makedirs(toDir)
     foreignReports = open(listPath,'r').read().split('\n')
-    for filename in foreignReports[:1]: # TEMP LIMIT TO FIRST REPORT
+    for filename in foreignReports: 
         print ('Read from ' + fromDir + filename)
         foreignText = loadFile(fromDir + filename) # should use os join
         resultText = translateInChunks(foreignText)
