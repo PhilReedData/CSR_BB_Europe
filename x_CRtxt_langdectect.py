@@ -2,8 +2,6 @@
 
 # x_CRtxt_langdectect.py
 # Detect the language for a given list of directories of text and html files.
-# (The html should never happen, expect all input to be text files. It's here just in case.)
-# 2017-09-12
 
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
@@ -29,13 +27,13 @@ def getPlainTextFromHTML(html):
     return text    
 
 
-parentPathIn = "U:/Phil_Read/CSR_UK_latest_txt_all/"
+parentPathIn = "U:/Ser-Huang_Poon/UK_CRtxt&hml/"
 yearDirs = [
-    "1999", "2000", "2001", "2002", "2003", "2004", "2005",
+    "-1/txt", "2000", "2001", "2002", "2003", "2004", "2005",
     "2006", "2007", "2008", "2009", "2010", "2011", "2012", 
-    "2013", "2014", "2015", "2016"
+    "2013", "2014", "2015", "2016", "2017"
     ]
-logPath = "x_CSRtxt_langdectect.csv"
+logPath = "x_CRtxt_langdectect.csv"
 logFile = open(logPath, 'w')
 SEP = ','
 # Header
@@ -50,7 +48,7 @@ for yearDir in yearDirs:
     for filePath in files:
         fullPath = join(parentPathIn+yearDir, filePath)
         data = ""
-        with codecs.open(fullPath, 'r', encoding='utf8', errors='ignore') as file:
+        with codecs.open(fullPath, 'r', 'utf-8') as file:
             data = file.read()
         if filePath.endswith('.pdf'):
             # Don't read PDF, too slow!
