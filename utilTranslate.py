@@ -113,6 +113,7 @@ if __name__ == "__main__":
     #resultPronunciation = result.pronunciation # = None
     #print ('Translated from '+ resultSrc + ' to ' + resultDest + ':')
     #print (resultText[:200] + '...')
+    #quit()
     
     # Read in list to translate, save back
     fromDir = "U:/Phil_Read/CSR_UK_latest_txt_all_flat/"
