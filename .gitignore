@@ -3,3 +3,5 @@
 *.csv
 archive/
 archive/*
+test*.txt
+x_*.txt

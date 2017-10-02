@@ -35,6 +35,7 @@ Kontakta oss
 fileInLarge = "U:/Phil_Read/CSR_UK_latest_txt_all_flat/2012_15_GB00BYSRJ698_CR1.txt"
 fileInSmall = "U:/Phil_Read/CSR_UK_latest_txt_all_flat/2009_20_GB0005758098_CR1.txt"
 fileInSV = "U:/Phil_Read/CSR_UK_latest_txt_all_flat/2000_35_GB0009895292_CR1.txt"
+fileInSVMedium = "U:/Phil_Read/CSR_UK_latest_txt_all_flat/2000_35_GB0009895292_CR1.txt"
 
 #METHOD 1: py-translate 1.0.3 (older but may be more reliable)
 # https://pypi.python.org/pypi/py-translate
@@ -61,7 +62,11 @@ translator = Translator()
 
 # METHOD 2
 def translateToEn(input):
-    charsS = str(len(input))
+    chars = len(input)
+    charsS = str(chars)
+    if chars < 4:
+        print ('Not translating short string of ' + charsS + ' chars')
+        return u''
     print('Pausing 1 second before translating ' + charsS +' chars')
     time.sleep(1)
     result = translator.translate(input)
@@ -82,6 +87,15 @@ def translateInChunks(input):
     while (charsTranslated < charsTotal):
         start = charsTranslated
         end = start + chunkSize
+        
+        # Choose a clean break point
+        lastLineBreak = input.rfind('\n', start, end)
+        if lastLineBreak > start:
+            print ('  Adjusting end from ' + str(end) + ' to ' + str(lastLineBreak))
+            end = lastLineBreak
+        else:
+            print ('  No linebreak found in chunk. ' + str(lastLineBreak))
+        
         if end > charsTotal:
             end = charsTotal
         #print ('chunksTranslated', chunksTranslated, 'charsTranslated (start)', charsTranslated, 'end', end)
@@ -102,20 +116,21 @@ def writeFile(englishText, path):
     with codecs.open(path, 'w', encoding='utf8', errors='ignore') as fileOut:
         fileOut.write(englishText)
 
-if __name__ == "__main__":
-    #result = translator.translate(input)
+def test01():
+    result = translator.translate(input)
     #foreignText = loadFile(fileInSV)
     #resultText = translateInChunks(foreignText)
     #result = translator.translate(foreignText)
     #resultSrc = result.src
     #resultDest = result.dest # = 'en'
-    #resultText = result.text
+    resultText = result.text
     #resultPronunciation = result.pronunciation # = None
     #print ('Translated from '+ resultSrc + ' to ' + resultDest + ':')
-    #print (resultText[:200] + '...')
-    #quit()
+    print (resultText[:200] + '...')
+    quit()
     
-    # Read in list to translate, save back
+# Read in list to translate, save back
+def test02():
     fromDir = "U:/Phil_Read/CSR_UK_latest_txt_all_flat/"
     toDir = "U:/Phil_Read/CSR_UK_latest_txt_all_flat_trns/"
     listPath = "./x_toBeTranslated.txt"
@@ -130,3 +145,16 @@ if __name__ == "__main__":
         print ('Writing ' + charsOut + ' character(s).')
         writeFile(resultText, toDir+filename)
 
+# Read in a chunkable foreign report
+def test03():
+    fromDir = "U:/Phil_Read/CSR_UK_latest_txt_all_flat/"
+    toDir = "U:/Phil_Read/CSR_UK_latest_txt_all_flat_trns/"
+    print ('Read from ' + fileInSVMedium)
+    foreignText = loadFile(fileInSVMedium)
+    resultText = translateInChunks(foreignText)
+    charsOut = str(len(resultText))
+    print ('Writing ' + charsOut + ' character(s).')
+    writeFile(resultText, 'testSV.txt')
+    
+if __name__ == "__main__":
+    test03()
