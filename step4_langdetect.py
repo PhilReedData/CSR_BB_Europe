@@ -15,7 +15,7 @@ import codecs
 
 from os.path import join
 
-unzipPath = "U:/Phil_Read/fromIrina/Europe_CSR_txt_trns/"
+unzipPath = "U:/Phil_Read/fromIrina/Europe_CSR_txt/"
 statsPathIn = 'stats.csv'
 statsPathOut = 'stats_lang.csv'
 logPath = 'log_lang.csv'
