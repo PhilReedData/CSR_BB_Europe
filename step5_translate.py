@@ -8,19 +8,19 @@ from shutil import copy2
 import utilTranslate
 
 # Read in list to translate, save back
-fromDir = "U:/Phil_Read/fromIrina/Europe_CSR_txt/"
-toDir = "U:/Phil_Read/fromIrina/Europe_CSR_txt_trns/"
-listPath = "U:/Phil_Read/fromIrina/Europe_CSR_txt/x_toBeTranslated.txt"
-englishPath = "U:/Phil_Read/fromIrina/Europe_CSR_txt/x_english.txt"
-successPath = "U:/Phil_Read/fromIrina/Europe_CSR_txt/x_translated.txt"
-copiedPath = "U:/Phil_Read/fromIrina/Europe_CSR_txt/x_copied.txt"
-failPath = "U:/Phil_Read/fromIrina/Europe_CSR_txt/x_failTranslated.txt"
+fromDir = "U:/Phil_Read/fromIrina/2017-10-27/Europe_CSR_txt_all/"
+toDir = "U:/Phil_Read/fromIrina/2017-10-27/Europe_CSR_txt_trns/"
+listPath = "U:/Phil_Read/fromIrina/2017-10-27/x_toBeTranslated.txt"
+englishPath = "U:/Phil_Read/fromIrina/2017-10-27/x_english.txt"
+successPath = "U:/Phil_Read/fromIrina/2017-10-27/x_translated.txt"
+copiedPath = "U:/Phil_Read/fromIrina/2017-10-27/x_copied.txt"
+failPath = "U:/Phil_Read/fromIrina/2017-10-27/x_failTranslated.txt"
 if not exists(toDir):
     makedirs(toDir)
 foreignReports = open(listPath,'r').read().split('\n')
 englishReports = open(englishPath,'r').read().split('\n')
 for filename in foreignReports: 
-    # If file (without extension 4 characters) matches
+    # If filename matches
     if filename in englishReports:
         # Skip translation if already in English
         print ('Skipping translation for English ' + filename)
