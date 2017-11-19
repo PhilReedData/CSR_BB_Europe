@@ -1,9 +1,33 @@
+<!DOCTYPE html>
 <html>
 	<head>
-		<title>Test</title>
+		<title>Highlighter</title>
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/cleanslate/0.10.1/cleanslate.min.css" />
+		<style> 
+			#dvHighlight {width: 100%;}
+			#dvHighlight strong { color: red;} 
+		</style>
 		<script type="text/javascript">
-		function Upload() {
-			var fileUpload = document.getElementById("fileUpload");
+		window.topics = []; // array of array of topic words
+
+		function HowManyTopics() {
+			alert("" + window.topics.length + " topics are loaded.");
+		}
+
+		/* From http://jsben.ch/LFfWA */
+		//String.prototype.replaceAll_1 = function(search, replacement) {
+		//    var target = this;
+		//    return target.replace(new RegExp(search, 'g'), replacement);
+		//};
+		//String.prototype.replaceAll_2 = function(search, replacement) {
+		//    var target = this;
+		//    return target.split(search).join(replacement);
+		//};
+		//// str.replaceAll_2('abc', '123');
+
+		/* Step 1 */
+		function UploadWordVectors() {
+			var fileUpload1 = document.getElementById("fileUpload1");
 			var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
 			var sep = ","
 			var radios = document.getElementsByName("separator");
@@ -13,25 +37,50 @@
 					break;
 				}
 			}
-			if (regex.test(fileUpload.value.toLowerCase())) {
+			if (regex.test(fileUpload1.value.toLowerCase())) {
 				if (typeof (FileReader) != "undefined") {
 					var reader = new FileReader();
 					reader.onload = function (e) {
 						var table = document.createElement("table");
 						var rows = e.target.result.split("\n");
+						var numTopics = 0; // PR
+						var topicsTransposed = [];
 						for (var i = 0; i < rows.length; i++) {
 							var row = table.insertRow(-1);
 							var cells = rows[i].split(sep);
+							var topic = [];
 							for (var j = 0; j < cells.length; j++) {
 								var cell = row.insertCell(-1);
 								cell.innerHTML = cells[j];
+								if (i > 0) {
+									topic.push(cells[j]);
+								}
 							}
+							if (i <= 0) { // PR first row
+								numTopics = cells.length;
+							} else {
+								topicsTransposed.push(topic);
+							}
+
 						}
+						// Transpose topics correctly (using Array.map)
+						window.topics = topicsTransposed[0].map(function (col, c) {
+							return topicsTransposed.map(function (row, r) {
+								return topicsTransposed[r][c];
+							});
+						});
 						var dvCSV = document.getElementById("dvCSV");
-						dvCSV.innerHTML = "";
+						//dvCSV.innerHTML = "";
 						dvCSV.appendChild(table);
+
+						var controls = document.getElementById("controls");
+						//controls.innerHTML = "";
+						var topicSelector = document.getElementById("topicselector");
+						topicSelector.max = numTopics;
+						topicSelector.value = 1;
+
 					}
-					reader.readAsText(fileUpload.files[0]);
+					reader.readAsText(fileUpload1.files[0]);
 				} else {
 					alert("This browser does not support HTML5.");
 				}
@@ -39,19 +88,90 @@
 				alert("Please upload a valid CSV file.");
 			}
 		}
+
+		/* Step 2 */
+		function UploadTextDoc() {
+			var fileUpload2 = document.getElementById("fileUpload2");
+			var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
+
+			if (regex.test(fileUpload1.value.toLowerCase())) {
+				if (typeof (FileReader) != "undefined") {
+					var reader = new FileReader();
+					reader.onload = function (e) {
+						var dvHighlight = document.getElementById("dvHighlight");
+						// Get the text, put into a div (with line breaks replaced)
+						var textRaw = e.target.result.replace(/(?:\r\n|\r|\n)/g, '<br />');
+
+						var textHighlighted = textRaw;
+						var topicID = document.getElementById("topicselector").value - 1;
+						topic = window.topics[topicID];
+						preH = "<strong>";
+						postH = "</strong>";
+						for (var i = 0; i < topic.length; i++) {
+							if (i == 0) continue; // skip first topic (the heading)
+							word = topic[i];
+
+							// No replaceAll! Use prototype from http://jsben.ch/LFfWA
+							//textHighlighted = textHighlighted.replaceAll_1(word,preH+word+postH);
+							//textHighlighted = textHighlighted.replaceAll_2(word,preH+word+postH);
+
+							//re = new RegExp("(^|.\b)(" + word + ")(s?\b.|$)", "gi");	
+							//textHighlighted = textHighlighted.replace(re,function(all,char1,word,char2){
+							//	var replacement = preH + word + postH;
+							//	return char1 + replacement + char2;
+							//});
+							// Just match first occurance of each word for now
+							//re = new RegExp("\\b"+ word + "\\b", "gi"); // doesn't work with - in word...
+							textHighlighted = textHighlighted.replace(word, preH+word+postH);
+
+						}
+						dvHighlight.innerHTML = textHighlighted;
+						//document.getElementById("practiceta").value = textHighlighted;
+					}
+					reader.readAsText(fileUpload2.files[0]);
+				} else {
+					alert("This browser does not support HTML5.");
+				}
+			} else {
+				alert("Please upload a valid text file.");
+			}
+		}
 		</script>
 	</head>
 	<body>
-		<h1>Highlighter</h1>
-		<p>Select the file <strong>word_vectors_for_each_topic.csv</strong></p>
-		<p>Separator:
-			<input type="radio" name="separator" value="," id="comma" />
-			<label for="comma">comma</label>
-			<input type="radio" name="separator" value=";" id="semicolon" checked="checked" />
-			<label for="semicolon">semicolon</label>
-		</p>
-		<input id="fileUpload" type="file" />
-		<input id="go" type="button" onclick="Upload();" value="Go" />
-		<div id="dvCSV" />
+		<div id="header">
+			<h1>Highlighter</h1>
+			<h2>Step 1: Provide word vectors for each topic (CSV)</h2>
+			<p>Select the file <strong>word_vectors_for_each_topic.csv</strong></p>
+			<p>Separator:
+				<input type="radio" name="separator" value="," id="comma" />
+				<label for="comma">comma</label>
+				<input type="radio" name="separator" value=";" id="semicolon" checked="checked" />
+				<label for="semicolon">semicolon</label>
+			</p>
+			<input id="fileUpload1" type="file" />
+			<input id="go1" type="button" onclick="UploadWordVectors()" value="Upload word vectors for each topic" />
+		</div>
+		<div id="dvCSV"></div> <!-- table -->
+		<hr />
+		<div id="controls">
+			<h2>Step 2: Select topic and text file to highlight</h2>
+			<form action="#">
+				<p>
+					Select topic: <input type="number" name="topicselector" min="1" max="1" id="topicselector" />
+					<input id="howmanytopics" type="button" onclick="HowManyTopics();" value="How many topics are loaded?" />
+				</p>
+				<p>		
+					<input id="fileUpload2" type="file" /> 
+					<input id="go2" type="button" onclick="UploadTextDoc()" value="Upload text document to highlight" />
+				</p>
+			</form>
+		</div>
+		<div id="dvHighlight"></div>
+		<!--<div id="practice"><textarea id="practiceta"></textarea></div>-->
+		<hr />
+		<div id="footer">
+			<p>(End)</p>
+		</div>
 	</body>
 </html>
