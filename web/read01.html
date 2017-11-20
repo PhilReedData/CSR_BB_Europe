@@ -4,7 +4,9 @@
 		<title>Highlighter</title>
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/cleanslate/0.10.1/cleanslate.min.css" />
 		<style> 
-			#dvHighlight {width: 100%;}
+			#wrapall {width: 100%; }
+			#dvCSV {width: 100%; overflow-x: scroll; background: #ddd;}
+			#dvHighlight {width: 100%; overflow-x: auto; overflow-wrap: break-word; background: #ddd;}
 			#dvHighlight strong { color: red;} 
 		</style>
 		<script type="text/javascript">
@@ -110,20 +112,25 @@
 						for (var i = 0; i < topic.length; i++) {
 							if (i == 0) continue; // skip first topic (the heading)
 							word = topic[i];
+							wordExtended = "" // so "word" becomes "w-o-r-d-"
+							if (word != null && word.length > 0) {
+								for (var c = 0; c < word.length; c++) {
+									wordExtended += word.charAt(c) + "-";
+								}
+								// No replaceAll! Use prototype from http://jsben.ch/LFfWA
+								//textHighlighted = textHighlighted.replaceAll_1(word,preH+word+postH);
+								//textHighlighted = textHighlighted.replaceAll_2(word,preH+word+postH);
 
-							// No replaceAll! Use prototype from http://jsben.ch/LFfWA
-							//textHighlighted = textHighlighted.replaceAll_1(word,preH+word+postH);
-							//textHighlighted = textHighlighted.replaceAll_2(word,preH+word+postH);
-
-							//re = new RegExp("(^|.\b)(" + word + ")(s?\b.|$)", "gi");	
-							//textHighlighted = textHighlighted.replace(re,function(all,char1,word,char2){
-							//	var replacement = preH + word + postH;
-							//	return char1 + replacement + char2;
-							//});
-							// Just match first occurance of each word for now
-							//re = new RegExp("\\b"+ word + "\\b", "gi"); // doesn't work with - in word...
-							textHighlighted = textHighlighted.replace(word, preH+word+postH);
-
+								//re = new RegExp("(^|.\b)(" + word + ")(s?\b.|$)", "gi");	
+								//textHighlighted = textHighlighted.replace(re,function(all,char1,word,char2){
+								//	var replacement = preH + word + postH;
+								//	return char1 + replacement + char2;
+								//});
+								// Just match first occurance of each word for now
+								re = new RegExp("\\b"+ word + "\\b", "gi"); // doesn't work with - in word...
+								//re = new RegExp(word, "gi"); // doesn't work with - in word...
+								textHighlighted = textHighlighted.replace(re, preH+word+postH);
+								}
 						}
 						dvHighlight.innerHTML = textHighlighted;
 						//document.getElementById("practiceta").value = textHighlighted;
@@ -138,7 +145,7 @@
 		}
 		</script>
 	</head>
-	<body>
+	<body><div id="wrapall">
 		<div id="header">
 			<h1>Highlighter</h1>
 			<h2>Step 1: Provide word vectors for each topic (CSV)</h2>
@@ -173,5 +180,5 @@
 		<div id="footer">
 			<p>(End)</p>
 		</div>
-	</body>
+	</div></body>
 </html>
