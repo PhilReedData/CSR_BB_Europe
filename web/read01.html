@@ -134,6 +134,22 @@
 						}
 						dvHighlight.innerHTML = textHighlighted;
 						//document.getElementById("practiceta").value = textHighlighted;
+
+						// Highlight in table too
+						var sheets = document.styleSheets;
+						for (var s = 1; s<sheets.length; s++) { // skip first sheet (external)
+							var rules = sheets[s].cssRules;
+							if (rules != null) {
+								for (var r = 0; r<rules.length; r++) {
+									if (rules[r].cssText.startsWith("td:")) { // td:nth-child(n)
+										sheets[s].deleteRule(r); // Delete previous table highlights
+										console.log("Deleted cssRule at " + s + "," + r);
+									}
+								}
+							}
+						}
+						var sheet = document.styleSheets[1];
+						sheet.insertRule("td:nth-child(" + (topicID+1) + ") { color: red; }", 1);
 					}
 					reader.readAsText(fileUpload2.files[0]);
 				} else {
