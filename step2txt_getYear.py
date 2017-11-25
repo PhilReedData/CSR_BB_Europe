@@ -9,7 +9,7 @@ SEP = ','
 import utilGetYearFromTXT
 from utilGetYearFromTXT import findModeYearsInTXT
 
-txtDir = "U:/Phil_Read/fromSHP/Europe_CSR_pdf_removed3/"
+txtDir = "U:/Ser-Huang_Poon/Europe_CSR/Europe_CSR_txt_trns/"
 
 from os import listdir, mkdir
 from os.path import isfile, join, exists
