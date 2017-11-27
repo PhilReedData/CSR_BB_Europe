@@ -106,7 +106,7 @@ def getPDFMetadata(path):
         return []
         
     
-def getPDFMetaCreationYear(path):
+def getPDFMetaCreationYear(path, getWholeDate=False):
     meta = getPDFMetadata(path)
     if meta == None or len(meta) == 0:
         # Could not read file
@@ -119,6 +119,8 @@ def getPDFMetaCreationYear(path):
         #print (item[0])
         if "creationdate" in key.lower():
             creationDateRaw = meta[key]
+            if getWholeDate:
+                return creationDateRaw
             break
     if len(creationDateRaw)>0:
         # Assume year is first instance of "20xx"

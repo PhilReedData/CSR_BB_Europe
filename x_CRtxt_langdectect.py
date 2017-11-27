@@ -1,7 +1,7 @@
 #!/usr/bin/python    
 
 # x_CRtxt_langdectect.py
-# Detect the language for a given list of directories of text files.
+# Detect the language for a given directory of text files.
 # 2017-09-12
 # 2017-11-25 newer file name convensions
 
