@@ -71,6 +71,10 @@
 								return topicsTransposed[r][c];
 							});
 						});
+						
+						// remove null/undef/empty entries from each list within topics
+						window.topics = window.topics.map(list=>list.filter(element=>element))
+						
 						var dvCSV = document.getElementById("dvCSV");
 						//dvCSV.innerHTML = "";
 						dvCSV.appendChild(table);
@@ -109,7 +113,10 @@
 						topic = window.topics[topicID];
 						preH = "<strong>";
 						postH = "</strong>";
-						for (var i = 0; i < topic.length; i++) {
+						
+						textHighlighted = textHighlighted.replace(new RegExp('\\b(' + topic.join('|') + ')\\b','gi'),match => '<strong>' + match + '</strong>');
+						
+						/* for (var i = 0; i < topic.length; i++) {
 							if (i == 0) continue; // skip first topic (the heading)
 							word = topic[i];
 							wordExtended = "" // so "word" becomes "w-o-r-d-"
@@ -131,7 +138,7 @@
 								//re = new RegExp(word, "gi"); // doesn't work with - in word...
 								textHighlighted = textHighlighted.replace(re, preH+word+postH);
 								}
-						}
+						} */
 						dvHighlight.innerHTML = textHighlighted;
 						//document.getElementById("practiceta").value = textHighlighted;
 
