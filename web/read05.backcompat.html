@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Highlighter</title>
+		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/cleanslate/0.10.1/cleanslate.min.css" />
+		<style> 
+			#wrapall {width: 100%; }
+			#dvCSV {width: 100%; overflow-x: scroll; background: #ddd;}
+			.dvHighlight {width: 100%; overflow-x: auto; overflow-wrap: break-word; background: #ddd;}
+			.dvHighlight strong { color: red;} 
+		</style>
+		<!-- Next few lines from https://stackoverflow.com/questions
+		/8238407/how-to-parse-excel-file-in-javascript-html5 -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.8/xlsx.full.min.js"></script>
+		
+		<script type="text/javascript">
+		/* ******** Global variables ******** */
+		/** array of array of topic words */
+		window.topics = []; 
+		window.highlightAreas = 0;
+		window.statsTable = null;
+		
+		/* ******** Display functions ******** */
+		function toggle(id) {
+			var x = document.getElementById(id);
+			if (x.style.display === "none") {
+				x.style.display = "block";
+			} else {
+				x.style.display = "none";
+			}
+		}
+		function show(id) {
+			var x = document.getElementById(id);
+			x.style.display = "block";
+		}
+		function hide(id) {
+			var x = document.getElementById(id);
+			x.style.display = "none";
+		}
+		
+		/* ******** Supporting logic ******** */
+		/* Are we doing vectors or phrases? */
+		function getMethod() {
+			method = 'vectors';
+			var radios = document.getElementsByName("method");
+			for (var i = 0; i < radios.length; i++) {
+				if (radios[i].checked) {
+					method = radios[i].value;
+					break;
+				}
+			}
+			return method;
+		}
+		
+		/* Should we hide all but the relvant lines? */
+		function getRelevantLines() {
+			relevantLines = false;
+			relevantLines = document.getElementById("relevantlines").checked;
+			return relevantLines;
+		}
+
+		/* Manage all the dvHighlight areas. */
+		function getNextDvHighlight() {
+			var i = window.highlightAreas++;
+			var d = document.createElement('div');
+			d.id = "dvHighlight" + i;
+			d.className = "dvHighlight";
+			return d;
+		}
+		
+		/* stats table from option */
+		function getSelectedHeading() {
+			var dropdown = document.getElementById("statsHeadings");
+			return dropdown.options[dropdown.selectedIndex].value;
+		}
+		
+		/* Look in stats table to 'translate' from one key to another.
+		 *	For example, from file_name_txt to name */
+		function lookupStatsTableValue(fromKey, toKey, value) {
+			var companyName = "";
+			if (window.statsTable) {
+				rows = window.statsTable;
+				for (r = 0; r < rows.length; r++) {
+					if (rows[r][fromKey] == value) {
+						companyName = rows[r][toKey];
+						break;
+					}
+				}
+			}
+			return companyName;
+		}
+		
+		/* ******** Main logic ******** */
+
+		/** Step 0 */
+		function UploadStatsTable() {
+			document.body.style.cursor  = 'wait';
+			var fileUpload0 = document.getElementById("fileUpload0");
+			var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xlsx)$/;
+			if (regex.test(fileUpload0.value.toLowerCase())) {
+				if (typeof (FileReader) != "undefined") {
+					var reader = new FileReader();
+					reader.onload = function (e) {
+						var data = e.target.result;
+						var workbook = XLSX.read(data, {
+							type: 'binary'
+						});
+		/* From /8238407/how-to-parse-excel-file-in-javascript-html5 */
+						// Here is your object
+						var first_sheet_name = workbook.SheetNames[0];
+						var json_object = XLSX.utils.sheet_to_json(workbook.Sheets[first_sheet_name]);
+						//console.log(json_object);
+						window.statsTable = json_object;
+						console.log(Object.keys(json_object[0]));
+						var statsHeadings = Object.keys(json_object[0]);
+						// Show headings 
+						var dropdown = document.getElementById("statsHeadings");
+						dlen = dropdown.options.length;
+						for (i = 0; i < dlen; i++) {
+							dropdown.options[i] = null; // clear old
+							//dropdown.remove(i); // why isn't this working either? KNOWN BUG
+							console.log('deleted dropdown option, may have failed');
+						}
+						for (o = 0; o<statsHeadings.length; o++) {
+							var opt = document.createElement("option"); 
+							opt.text = statsHeadings[o];
+							opt.value = statsHeadings[o];
+							if (statsHeadings[o] == "filename_txt" || statsHeadings[o] == "file_name_txt") {
+								opt.selected = true;
+								console.log('found ' + statsHeadings[o]);
+							}
+							dropdown.add(opt);
+						}
+						document.body.style.cursor  = 'default';
+					}
+				}
+				reader.readAsBinaryString(fileUpload0.files[0]);
+				reader.onerror = function(ex) {
+					console.log(ex);
+					document.body.style.cursor  = 'default';
+				};
+			} else {
+				alert("Please upload a valid Excel xlsx file.");
+				document.body.style.cursor  = 'default';
+			}
+		};
+		
+		/** Step 1 */
+		function UploadWordVectors() {
+			var fileUpload1 = document.getElementById("fileUpload1");
+			var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
+			var sep = ","
+			var radios = document.getElementsByName("separator");
+			for (var i = 0; i < radios.length; i++) {
+				if (radios[i].checked) {
+					sep = radios[i].value;
+					break;
+				}
+			}
+			if (regex.test(fileUpload1.value.toLowerCase())) {
+				if (typeof (FileReader) != "undefined") {
+					var reader = new FileReader();
+					reader.onload = function (e) {
+						var table = document.createElement("table");
+						var rows = e.target.result.split("\n");
+						var numTopics = 0; // PR
+						var topicsTransposed = [];
+						for (var i = 0; i < rows.length; i++) {
+							var row = table.insertRow(-1);
+							var cells = rows[i].split(sep);
+							var topic = [];
+							for (var j = 0; j < cells.length; j++) {
+								var cell = row.insertCell(-1);
+								cell.innerHTML = cells[j];
+								if (i > 0) {
+									topic.push(cells[j]);
+								}
+							}
+							if (i <= 0) { // PR first row
+								numTopics = cells.length;
+							} else {
+								topicsTransposed.push(topic);
+							}
+
+						}
+						// Transpose topics correctly (using Array.map)
+						window.topics = topicsTransposed[0].map(function (col, c) {
+							return topicsTransposed.map(function (row, r) {
+								return topicsTransposed[r][c];
+							});
+						});
+						
+						// remove null/undef/empty entries from each list within topics
+						//window.topics = window.topics.map(list=>list.filter(element=>element));
+						window.topics = window.topics.map(function(list) {
+							return list.filter(function (element) {
+								return element;
+							});
+						});
+						
+						var dvCSV = document.getElementById("dvCSV");
+						//dvCSV.innerHTML = "";
+						dvCSV.appendChild(table);
+
+						var controls = document.getElementById("controls");
+						//controls.innerHTML = "";
+						var topicSelector = document.getElementById("topicselector");
+						topicSelector.max = numTopics;
+						topicSelector.value = 1;
+						var numTopicsField = document.getElementById("numtopics");
+						numTopicsField.value = numTopics;
+
+					}
+					reader.readAsText(fileUpload1.files[0]);
+				} else {
+					alert("This browser does not support HTML5.");
+				}
+			} else {
+				alert("Please upload a valid CSV file.");
+			}
+		}
+
+		/** Step 2 */
+		function UploadTextDoc() {
+			// Remove previous work
+			var wrap = document.getElementById("dvHighlightWrap");
+			while (wrap.firstChild) {
+				wrap.removeChild(wrap.firstChild);
+			}
+			// Carry on
+			var fileUpload2 = document.getElementById("fileUpload2");
+			var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.csv|.txt)$/;
+
+			for (var f = 0; f < fileUpload2.files.length; f++) {
+				var filename = fileUpload2.files[f].name;
+				console.log("Uploaded " + filename);
+				if (regex.test(filename.toLowerCase())) {
+					if (typeof (FileReader) != "undefined") {
+						var reader = new FileReader();
+						reader.onload = function (e) {
+							var dvHighlight = getNextDvHighlight();
+							var h4 = document.createElement("h4");
+							var companyName = lookupStatsTableValue(getSelectedHeading(),"name",e.target.filename);
+							h4.innerHTML = e.target.filename + " - " + companyName;
+							wrap.appendChild(h4);
+							wrap.appendChild(dvHighlight);
+							var showRelevantLinesOnly = getRelevantLines();
+							// Get the text (with line breaks replaced)
+							var lineBreak = '</span><br /><span>';
+							if (showRelevantLinesOnly) {
+								lineBreak = '</span><span>';
+							}
+							var textRaw = e.target.result.replace(/(?:\r\n|\r|\n)/g, lineBreak);
+							var phrase = "";
+							preH = "<strong>";
+							postH = "</strong>";
+							var textHighlighted = "<span>" + textRaw + "</span>";
+							
+							if (getMethod() == "vector") {
+								var topicID = document.getElementById("topicselector").value - 1;
+								topic = window.topics[topicID];
+								phrase = topic.join('|');
+							} else /* if phrase */ {
+								phrase = document.getElementById("thephrase").value;
+								// Clean it up
+								phrase = phrase.replace(/[^a-zA-Z0-9' _|-]/g,''); // more to follow
+							}
+							
+							// Highlight all words of topic
+							//textHighlighted = textHighlighted.replace(new RegExp('\\b(' + phrase + ')\\b','gi'),match => '<strong>' + match + '</strong>');
+							textHighlighted = textHighlighted.replace(new RegExp('\\b(' + phrase + ')\\b','gi'), function(match) {
+								return '<strong>' + match + '</strong>';
+							};
+							
+							// Put text in the div
+							dvHighlight.innerHTML = textHighlighted;
+
+							if (getMethod() == "vector") {
+								// Highlight in table too
+								var sheets = document.styleSheets;
+								for (var s = 1; s<sheets.length; s++) { // skip first sheet (external)
+									var rules = sheets[s].cssRules;
+									if (rules != null) {
+										for (var r = 0; r<rules.length; r++) {
+											if (rules[r].cssText.startsWith("td:")) { // td:nth-child(n)
+												sheets[s].deleteRule(r); // Delete previous table highlights
+												console.log("Deleted cssRule at " + s + "," + r);
+											}
+										}
+									}
+								}
+								var sheet = document.styleSheets[1];
+								sheet.insertRule("td:nth-child(" + (topicID+1) + ") { color: red; }", 1);
+							}
+							
+							// if show relevant lines only...
+							if(showRelevantLinesOnly) {
+								// loop span elements of dvHighlight
+								lines = dvHighlight.getElementsByTagName('span');
+								for (var l = 0; l < lines.length; l++) {
+									line = lines[l];
+									// hide it
+									line.style.display = "none";
+									// if contain strong, show it again (with line number?)
+									if (line.getElementsByTagName('strong').length > 0) {
+										// No <br> elements, so need block not inline
+										line.innerHTML = "Line " + (l-1) + ": " + line.innerHTML
+										line.style.display = "block";
+										line.style.paddingBottom = "0.3em";
+									}
+								}
+							}
+						}
+						reader.filename = filename;
+						reader.readAsText(fileUpload2.files[f]);
+					} else {
+						alert("This browser does not support HTML5.");
+					}
+				} else {
+					alert("Please upload a valid text file.");
+				}
+			} // end for
+		} // end function
+		</script>
+	</head>
+	<body><div id="wrapall">
+		<div id="header">
+			<h1>Highlighter</h1>
+			<p>Method:
+				<input type="radio" name="method" value="vectors" id="vectors" checked="checked" onclick="show('step1a'); hide('step1b'); show('dvCSV'); show('step2a'); hide('step2b'); " />
+				<label for="vectors">(a) vectors</label>
+				<input type="radio" name="method" value="phrase" id="phrase" onclick="hide('step1a'); show('step1b'); hide('dvCSV'); hide('step2a'); show('step2b');" />
+				<label for="phrase">(b) phrase</label>
+			</p>
+			<p>Show full reports or just relevant lines:
+				<input type="checkbox" id="relevantlines" > <label for="relevantlines">Show relvant lines only</label>
+			</p>
+			<p>
+				Optional: <br />Select stats table to show company name with results below.
+				<br/>
+				<input id="fileUpload0" type="file" />
+				<input id="go0" type="button" onclick="UploadStatsTable()" value="Upload stats xlsx" /> <label for="selectHeadings">Heading to use:</label> <select id="statsHeadings" ></select>
+			</p>
+			
+			<hr />
+			
+			<h2>Step 1: load words to highlight</h2>
+			<div id="step1a">
+				<h3>Step 1a: provide word vectors for each topic (CSV)</h3>
+				<p>Select the file <strong>word_vectors_for_each_topic.csv</strong></p>
+				<p>Separator:
+					<input type="radio" name="separator" value="," id="comma" />
+					<label for="comma">comma</label>
+					<input type="radio" name="separator" value=";" id="semicolon" checked="checked" />
+					<label for="semicolon">semicolon</label>
+				</p>
+				<input id="fileUpload1" type="file" />
+				<input id="go1" type="button" onclick="UploadWordVectors()" value="Upload word vectors for each topic" />
+			</div>
+			<div id="step1b" style="display: none;">
+				<h3>Step 1b: provide word phrase</h3>
+				<p>What word or phrase do you want to highlight?
+					<input id="thephrase" type="text" size="20" placeholder="e.g. zero-hours contract" value="recycling|waste management" pattern="[a-zA-Z0-9_|' -]+" /> <em>(use '|' to separate multiple phrases)</em>
+				</p>
+			</div>
+		</div>
+		<div id="dvCSV"></div> <!-- table -->
+		<hr />
+		<div id="controls">
+			<h2>Step 2: select reports to highlight</h2>
+			<div id="step2a">
+				<h3>Step 2a: select topic to highlight</h3>
+				<p>
+					Select topic: <input type="number" name="topicselector" min="1" max="1" id="topicselector" />
+					<label for="numtopics">How many topics are loaded?: </label> <input id="numtopics" type="text" disabled="disabled" size="3" value="" />
+				</p>
+			</div>
+			
+			<div id="step2b" style="display: none;">
+				<!--<h3>Step 2b: no extra options</h3>-->
+			</div>
+				
+			<div id="step2all">
+				<h4>Step 2: select text files</h4>
+				<p>		
+					<input id="fileUpload2" type="file" multiple="multiple" /> 
+					<input id="go2" type="button" onclick="UploadTextDoc()" value="Upload text document to highlight" />
+				</p>
+			</div>
+		</div>
+		<div id="dvHighlightWrap"></div>
+		<hr />
+		<div id="footer">
+			<p>(End)</p>
+		</div>
+	</div></body>
+</html>
