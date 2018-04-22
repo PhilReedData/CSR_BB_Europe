@@ -18,6 +18,8 @@ unzipPath = unzipPathEurope if isEurope else unzipPathUK
 tableOutPath = 'stats11EU.csv' if isEurope else 'stats11UK.csv'
 refinedTableOutPath = 'stats13EU.csv' if isEurope else 'stats13UK.csv'
 SEP = ','
+# Files to skip within the zip archives, such as files that should not be there.
+SKIP_FILES = ['20170717c_EuropeCSR.xlsx']
 
 # Prepare dataframe and output table
 tableOut = open(tableOutPath,'w')
@@ -45,7 +47,9 @@ for zip in zipfiles:
         namelist = zipobject.namelist()
         print(len(namelist),'files to extract within', countryCode, zip)
         for name in namelist :
-            extractAlreadyExists = os.path.isfile(name)
+            if name in SKIP_FILES:
+                continue
+            extractAlreadyExists = os.path.isfile(os.path.join(extractPath, name))
             
             # For each file within the zip, add a row to tableOut
             filenamefull = name
