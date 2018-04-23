@@ -95,7 +95,21 @@ class Companies(object):
     
     # Look through companies list for this index country. Return first match, else None.
     def getCompanyByTicker(self, indexCountry, ticker):
+        # Hack for Volkswagen, Germany, which is listed as VOW3 but reports have VOW.
+        if indexCountry == 'DE' and ticker == 'VOW':
+            ticker = 'VOW3'
+        # Hack for TELIA, Finland, listed as TELIA1 but reports have TELIA.
+        if indexCountry == 'FI' and ticker == 'TELIA':
+            ticker = 'TELIA1'
+        # Hack for Fiat Chrysler, Italy, listed as FCA but reports have FCAU
+        if indexCountry == 'IT' and ticker == 'FCAU':
+            ticker = 'FCA'
+        # Hack for ABBN in Sweden, look in Switzerland instead.
+        if indexCountry == 'SE' and ticker == 'ABBN':
+            indexCountry = 'CH'
+    
         for company in self.getCompaniesByIndexCountry(indexCountry):
+            # Perform check
             if company.getTickerShort() == ticker:
                 return company
         return self.noneCompany

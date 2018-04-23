@@ -3,7 +3,7 @@
 # load company details, add these columns to stats table in the right places, matching filename
 
 ### Change this True/False to run Europe or UK version of code. ###
-isEurope = False
+isEurope = True
 
 statsPathIn  = 'stats13EU.csv' if isEurope else 'stats13UK.csv'
 statsPathOut = 'stats21EU.csv' if isEurope else 'stats21UK.csv'
@@ -20,6 +20,9 @@ df = pd.read_csv(statsPathIn)
 def matchCompany(filenamefull, countries, field):
     firstCountry = countries[:2] # just use first country if multiple
     company = companies.getCompanyByBBFilename(firstCountry, filenamefull)
+    if company.tickerFull == 'UNKNOWN' and len(countries) > 4:
+        secondCountry = countries[3:5]
+        company = companies.getCompanyByBBFilename(secondCountry, filenamefull)
     fields = {
         'companyname': company.name,
         'tickerfull' : company.tickerFull,
