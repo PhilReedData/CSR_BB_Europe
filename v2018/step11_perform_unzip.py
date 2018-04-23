@@ -3,7 +3,7 @@
 # Unzip everything to one folder
 
 ### Change this True/False to run Europe or UK version of code. ###
-isEurope = True # UK not implemented yet
+isEurope = False
 
 # Import my utilities
 import utilCSR
@@ -11,7 +11,7 @@ import utilCSR
 # Paths
 zipPathEurope = "U:/Ser-Huang_Poon/Europe_CSRzipBloomberg/"
 unzipPathEurope = "U:/Phil_Read/CSR_Europe/unzipped_allinone/"
-zipPathUK = "" # there are three folders of zips! Rethink this, loop or similar
+zipPathUK = "U:/Phil_Read/CSR_UK/zipped_allinone/"
 unzipPathUK = "U:/Phil_Read/CSR_UK/unzipped_allinone/"
 zipPath = zipPathEurope if isEurope else zipPathUK
 unzipPath = unzipPathEurope if isEurope else unzipPathUK
@@ -20,12 +20,14 @@ refinedTableOutPath = 'stats13EU.csv' if isEurope else 'stats13UK.csv'
 SEP = ','
 # Files to skip within the zip archives, such as files that should not be there.
 SKIP_FILES = ['20170717c_EuropeCSR.xlsx']
+SKIP_ZIPS = ['IBEX2013x_BB_Docs_071417_114251.zip']
 
 # Prepare dataframe and output table
 tableOut = open(tableOutPath,'w')
 columnHeadings = ['filenamefull', 'filetype', 'filenameshort','reporttype','uploadyear','ticker','country','unzip']
 tableOut.write(SEP.join(columnHeadings) + '\n')
 import pandas as pd
+import numpy as np
 df = pd.DataFrame(columns=columnHeadings)
 rowCount = 0
 
@@ -34,12 +36,16 @@ from os import listdir
 from os.path import isfile, join
 zipfiles = [f for f in listdir(zipPath) if (isfile(join(zipPath, f)) )]
 zipfiles.sort()
+#TEMP
+#zipfiles = ['AEX2010_BB_Docs_071417_092823.zip', 'BEL2008-11_BB_Docs_071617_163546.zip']
 print(len(zipfiles),'zipfiles to unzip')
 
 # Loop zip files
 import zipfile
 import os.path
 for zip in zipfiles:
+    if zip in SKIP_ZIPS:
+        continue
     countryCode = utilCSR.getIsoFromString(zip) if isEurope else "GB"
     extractPath = os.path.abspath(unzipPath)
     try:
@@ -66,7 +72,7 @@ for zip in zipfiles:
             # if df contains name, update country column, else add new row
             match = df.loc[df['filenamefull'] == name]
             if len(match) > 0:
-                previousCountry = match['country']
+                previousCountry = df.loc[df['filenamefull'] == name, 'country'].iloc[0]
                 if previousCountry != country:
                     df.loc[df['filenamefull'] == name, 'country'] = previousCountry + "|" + country
             else:
@@ -94,7 +100,7 @@ tableOut.close()
 # Drop unzip column 
 df = df.drop('unzip',1)
 # Rename now last column of df; country to countries
-newColumnHeadings = columnHeadings[:-2] + ['countries']
-df.rename(index=str, columns = newColumnHeadings, inplace = True)
+df['countries'] = df['country']
+df = df.drop('country',1)
 # Export dataframe
 df.to_csv(refinedTableOutPath, encoding='utf-8', index=False)

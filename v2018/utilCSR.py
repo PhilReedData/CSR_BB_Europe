@@ -22,7 +22,9 @@ INDEX2ISO = {
 }
 
 # Dict of codes for the known report types.
-# Note: there are other AR strings! Preliminary_Annual, 20-F
+# Note: there are other AR strings: Preliminary_Annual, 20-F
+# Note: other CR strings: PrelimDigest_CSR_Report, Corporate_Responsiblity0
+# where 0 is a number of 1-2 digits
 REPORT_TYPES = {
     'CR'    :'Corporate_Responsibility',
     'AR'    :'Annual_Report',
@@ -61,11 +63,11 @@ def test_rawFilename2Ticker():
 # Given a raw Bloomberg report filename,
 # return a code for the report type.
 def rawFilename2ReportType(rawFilename):
-    if "_Corporate_Responsibility_" in rawFilename:
+    if "_Corporate_Responsibility" in rawFilename or "_PrelimDigest_CSR_Report" in rawFilename:
         return "CR"
-    elif "_Annual_Report_" in rawFilename or "_Preliminary_Annual_" in rawFilename or "_20-F_" in rawFilename:
+    elif "_Annual_Report" in rawFilename or "_Preliminary_Annual" in rawFilename or "_20-F" in rawFilename:
         return "AR"
-    elif "_ESG_Releases_" in rawFilename:
+    elif "_ESG_Releases" in rawFilename:
         return "ESG"
     return "UNKNOWN"
 
