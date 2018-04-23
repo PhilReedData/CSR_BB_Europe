@@ -22,7 +22,7 @@ INDEX2ISO = {
 }
 
 # Dict of codes for the known report types.
-# Note: there are other AR strings: Preliminary_Annual, 20-F
+# Note: there are other AR strings: Preliminary_Annual, 20-F, 10K, 11-K, Embedded_Value etc
 # Note: other CR strings: PrelimDigest_CSR_Report, Corporate_Responsiblity0
 # where 0 is a number of 1-2 digits
 REPORT_TYPES = {
@@ -65,7 +65,7 @@ def test_rawFilename2Ticker():
 def rawFilename2ReportType(rawFilename):
     if "_Corporate_Responsibility" in rawFilename or "_PrelimDigest_CSR_Report" in rawFilename:
         return "CR"
-    elif "_Annual_Report" in rawFilename or "_Preliminary_Annual" in rawFilename or "_20-F" in rawFilename:
+    elif "_Annual" in rawFilename or "_Preliminary_Annual" in rawFilename or "_20" in rawFilename or "_10" in rawFilename or "_11" in rawFilename or "_Embedded_Value":
         return "AR"
     elif "_ESG_Releases" in rawFilename:
         return "ESG"
