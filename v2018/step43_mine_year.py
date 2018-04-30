@@ -7,7 +7,7 @@
 isEurope = False
 
 statsPathIn  = 'stats41EU.csv' if isEurope else 'stats41UK.csv'
-statsPathIn  = 'stats31EU.csv' if isEurope else 'stats31UK.csv' # TEMP
+#statsPathIn  = 'stats31EU.csv' if isEurope else 'stats31UK.csv' # TEMP
 statsPathOut = 'stats43EU.csv' if isEurope else 'stats43UK.csv'
 logPath = 'log43EU.csv' if isEurope else 'log43UK.csv' # in case of crash
 
