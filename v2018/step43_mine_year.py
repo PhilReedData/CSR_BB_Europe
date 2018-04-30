@@ -4,7 +4,7 @@
 # Could extend it to not perform mining on a report that has already been mined.
 
 ### Change this True/False to run Europe or UK version of code. ###
-isEurope = True
+isEurope = False
 
 statsPathIn  = 'stats41EU.csv' if isEurope else 'stats41UK.csv'
 statsPathIn  = 'stats31EU.csv' if isEurope else 'stats31UK.csv' # TEMP
