@@ -3,7 +3,7 @@
 # work out language, add column to stats table, matching filename
 
 ### Change this True/False to run Europe or UK version of code. ###
-isEurope = True
+isEurope = False
 
 statsPathIn  = 'stats45EU.csv' if isEurope else 'stats45UK.csv'
 statsPathOut = 'stats51EU.csv' if isEurope else 'stats51UK.csv'

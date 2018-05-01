@@ -4,7 +4,7 @@
 # Could extend it to not perform mining on a report that has already been mined.
 
 ### Change this True/False to run Europe or UK version of code. ###
-isEurope = True
+isEurope = False
 
 statsPathIn  = 'stats31EU.csv' if isEurope else 'stats31UK.csv'
 statsPathOut = 'stats41EU.csv' if isEurope else 'stats41UK.csv'
@@ -14,13 +14,19 @@ unzipPathEU = "U:/Phil_Read/CSR_Europe/unzipped_allinone/"
 unzipPathUK = "U:/Phil_Read/CSR_UK/unzipped_allinone/"
 unzipPath = unzipPathEU if isEurope else unzipPathUK
 
+# Damaged or otherwise unreadable PDF files to skip.
+SKIP_PDFS = [
+    '070210_MTC_Annual_Report_WD000000002006198413.pdf', 
+    '031412_WMH_Annual_Report_WD000000002044338474.pdf'
+]
+
 # Get creation year from given PDF document
 import PyPDF2
 
 # Get the entire metadata dictionary for given PDF.
 def getPDFMetadata(path):
-    p = file(path, "rb")
     try:
+        p = file(path, "rb")
         pdf = PyPDF2.PdfFileReader(p)
         pdf_info = pdf.getDocumentInfo()
         return pdf_info
@@ -29,6 +35,9 @@ def getPDFMetadata(path):
         return []
     except Exception:
         print ('Exception reading: ' + path)
+        return []
+    except KeyboardInterrupt:
+        print ('Keyboard interrupt reading: ' + path) # skip to next if frozen
         return []
         
     
@@ -74,7 +83,7 @@ log.write('filenamefull,metayear\n')
 #	Return metaYear.
 def getMetaYear(filenamefull, filetype):
     year = ''
-    if filetype == 'pdf':
+    if filetype == 'pdf' and not filenamefull in SKIP_PDFS:
         year = getPDFMetaCreationYear(unzipPath + filenamefull)
     log.write(filenamefull + ',' + str(year) + '\n') 
     return year
