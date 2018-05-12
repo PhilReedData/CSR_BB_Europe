@@ -3,12 +3,12 @@
 # find txt files, add these columns to stats table in the right places, matching filename
 
 ### Change this True/False to run Europe or UK version of code. ###
-isEurope = False
+isEurope = True
 
 statsPathIn  = 'stats21EU.csv' if isEurope else 'stats21UK.csv'
 statsPathOut = 'stats31EU.csv' if isEurope else 'stats31UK.csv'
 
-txtPathEU = 'U:/Ser-Huang_Poon/Europe_CSR/Europe_CSR_txt_all/'
+txtPathEU = 'U:/Phil_Read/CSR_Europe/txt_allinone/'
 txtPathUK = 'U:/Phil_Read/CSR_UK/txt_allinone/'
 txtPath   = txtPathEU if isEurope else txtPathUK
 

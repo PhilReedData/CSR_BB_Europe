@@ -3,7 +3,7 @@
 # work out best year, add columns to stats table, matching filename
 
 ### Change this True/False to run Europe or UK version of code. ###
-isEurope = False
+isEurope = True
 
 statsPathIn  = 'stats43EU.csv' if isEurope else 'stats43UK.csv'
 statsPathOut = 'stats45EU.csv' if isEurope else 'stats45UK.csv'

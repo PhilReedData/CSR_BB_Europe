@@ -9,7 +9,7 @@ statsPathIn  = 'stats51EU.csv' if isEurope else 'stats51UK.csv'
 statsPathOut = 'stats53EU.csv' if isEurope else 'stats53UK.csv'
 logPath = 'log53EU.csv' if isEurope else 'log53UK.csv' # in case of crash
 
-txtPathEU = 'U:/Ser-Huang_Poon/Europe_CSR/Europe_CSR_txt_all/'
+txtPathEU = 'U:/Phil_Read/CSR_Europe/txt_allinone/'
 txtPathUK = 'U:/Phil_Read/CSR_UK/txt_allinone/'
 txtPath   = txtPathEU if isEurope else txtPathUK
 

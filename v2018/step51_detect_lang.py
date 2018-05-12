@@ -3,13 +3,13 @@
 # work out language, add column to stats table, matching filename
 
 ### Change this True/False to run Europe or UK version of code. ###
-isEurope = False
+isEurope = True
 
 statsPathIn  = 'stats45EU.csv' if isEurope else 'stats45UK.csv'
 statsPathOut = 'stats51EU.csv' if isEurope else 'stats51UK.csv'
 logPath = 'log51EU.csv' if isEurope else 'log51UK.csv' # in case of crash
 
-txtPathEU = 'U:/Ser-Huang_Poon/Europe_CSR/Europe_CSR_txt_all/'
+txtPathEU = 'U:/Phil_Read/CSR_Europe/txt_allinone/'
 txtPathUK = 'U:/Phil_Read/CSR_UK/txt_allinone/'
 txtPath   = txtPathEU if isEurope else txtPathUK
 

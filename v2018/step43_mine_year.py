@@ -4,14 +4,14 @@
 # Could extend it to not perform mining on a report that has already been mined.
 
 ### Change this True/False to run Europe or UK version of code. ###
-isEurope = False
+isEurope = True
 
 statsPathIn  = 'stats41EU.csv' if isEurope else 'stats41UK.csv'
 #statsPathIn  = 'stats31EU.csv' if isEurope else 'stats31UK.csv' # TEMP
 statsPathOut = 'stats43EU.csv' if isEurope else 'stats43UK.csv'
 logPath = 'log43EU.csv' if isEurope else 'log43UK.csv' # in case of crash
 
-txtPathEU = 'U:/Ser-Huang_Poon/Europe_CSR/Europe_CSR_txt_all/'
+txtPathEU = 'U:/Phil_Read/CSR_Europe/txt_allinone/'
 txtPathUK = 'U:/Phil_Read/CSR_UK/txt_allinone/'
 txtPath   = txtPathEU if isEurope else txtPathUK
 
